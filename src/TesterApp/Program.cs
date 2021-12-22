@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using Simplify.DI;
+using Simplify.Web;
+using Simplify.Web.Json.Model.Binding;
+using Simplify.Web.Model;
+using TesterApp.Setup;
 
-namespace TesterApp
-{
-	public class Program
-	{
-		public static void Main(string[] args) => CreateWebHostBuilder(args).Build().Run();
+DIContainer.Current
+.RegisterAll()
+.Verify();
 
-		public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-			WebHost.CreateDefaultBuilder(args)
-			.UseStartup<Startup>();
-	}
-}
+HttpModelHandler.RegisterModelBinder<JsonModelBinder>();
+
+var app = WebApplication.CreateBuilder(args).Build();
+
+app.UseSimplifyWebWithoutRegistrations();
+
+app.Run();
