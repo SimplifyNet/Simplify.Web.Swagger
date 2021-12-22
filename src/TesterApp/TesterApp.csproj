@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Simplify.Web.Swagger\Simplify.Web.Swagger.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Simplify.Web.Json" Version="2.2.*" />
+	</ItemGroup>
+</Project>
