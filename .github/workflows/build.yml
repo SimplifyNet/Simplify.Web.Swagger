@@ -26,7 +26,12 @@ jobs:
       - name: Create Package
         run: dotnet pack --no-restore --no-build -c Release -o ./publish
 
-      - name: Create artifact
+      - name: Create package artifact
         uses: actions/upload-artifact@v2
         with:
-          path: ./src/publish
+          path: ./src/publish/*.nupkg
+
+      - name: Create symbol package artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./src/publish/*.snupkg
