@@ -6,19 +6,27 @@ using TesterApp.Setup;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// DI
+
 DIContainer.Current
 	.RegisterAll()
 	.Verify();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer()
+	.AddSwaggerGen()
+	.AddSimplifyWebSwagger();
+
+// Configuration
 
 HttpModelHandler.RegisterModelBinder<JsonModelBinder>();
+
+// App
 
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
 app.UseSimplifyWebWithoutRegistrations();
 
 app.Run();
