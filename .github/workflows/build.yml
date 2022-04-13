@@ -24,11 +24,11 @@ jobs:
         run: dotnet build --no-restore -c Release
 
       - name: Create Package
-        run: dotnet pack --no-restore --no-build -c Release -o publish
+        run: dotnet pack --no-restore --no-build -c Release -o /publish
 
       - name: Create artifacts
         uses: actions/upload-artifact@v2
         with:
           name: dist-without-markdown
           path: |
-            publish
+            /publish
