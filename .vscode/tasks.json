@@ -6,9 +6,12 @@
 		"command": "dotnet",
 		"type": "process",
 		"args": [
-			"build",
-			"${workspaceFolder}/src/Simplify.Web.Swagger.sln"
+			"build"
 		],
+		"options":
+		{
+			"cwd": "src"
+		},
 		"problemMatcher": "$msCompile",
 		"group":
 		{
