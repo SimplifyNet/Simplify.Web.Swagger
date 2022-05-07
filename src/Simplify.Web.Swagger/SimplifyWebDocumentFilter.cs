@@ -11,7 +11,13 @@ namespace Simplify.Web.Swagger
 	/// </summary>
 	public class SimplifyWebDocumentFilter : IDocumentFilter
 	{
-		private const string VersionEndPoint = "/version";
+		// private const string VersionEndPoint = "/version";
+
+		private static IList<string> RemovePrefixes = new List<string>
+			{
+				"Controllers.",
+				"Api.v1."
+			};
 
 		/// <summary>
 		/// Applies current filter
@@ -47,18 +53,23 @@ namespace Simplify.Web.Swagger
 		{
 			var pathItem = new OpenApiPathItem();
 
-			pathItem.AddOperation(HttpMethodToOperationType(method), CreateOperation());
+			pathItem.AddOperation(HttpMethodToOperationType(method), CreateOperation(item));
 
 			return pathItem;
 		}
 
-		private static OpenApiOperation CreateOperation()
+		private static OpenApiOperation CreateOperation(IControllerMetaData item)
 		{
+			// TODO
+
 			var operation = new OpenApiOperation
 			{
 			};
 
-			// operation.Responses.Add("200", response);
+			operation.Tags.Add(new OpenApiTag
+			{
+				Name = FormatOperationName(item)
+			});
 
 			return operation;
 		}
@@ -75,17 +86,40 @@ namespace Simplify.Web.Swagger
 				_ => OperationType.Get
 			};
 
-		// private KeyValuePair<string, OpenApiResponse> CreateResponse()
-		// {
-		// 	var response = new OpenApiResponse
-		// 	{
-		// 		Description = "Success"
-		// 	};
+		// TODO
+		private static KeyValuePair<string, OpenApiResponse> CreateResponse()
+		{
+			var response = new OpenApiResponse
+			{
+			};
 
-		// 	return response;
-		// }
+			return new KeyValuePair<string, OpenApiResponse>("", response);
+		}
 
 		private static string FormatControllerName(string route, HttpMethod method, bool needToAddPostfix) =>
 			needToAddPostfix ? $"{route} ({method})" : route;
+
+		private static string? FormatOperationName(IControllerMetaData item) =>
+			item.ControllerType.FullName != null ? FormatOperationName(item.ControllerType.FullName) : null;
+
+		private static string FormatOperationName(string str)
+		{
+			foreach (var prefix in RemovePrefixes)
+			{
+				var prefixIndex = str.IndexOf(prefix);
+
+				if (prefixIndex == -1)
+					continue;
+
+				str = str.Substring(prefixIndex + prefix.Length);
+			}
+
+			str = str.Replace(".", "/");
+
+			if (str.EndsWith("Controller"))
+				str = str.Substring(0, str.LastIndexOf("Controller"));
+
+			return str;
+		}
 	}
 }
