@@ -2,6 +2,7 @@ using Simplify.DI;
 using Simplify.Web;
 using Simplify.Web.Json.Model.Binding;
 using Simplify.Web.Model;
+using Simplify.Web.Swagger;
 using TesterApp.Setup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,8 +14,7 @@ DIContainer.Current
 	.Verify();
 
 builder.Services.AddEndpointsApiExplorer()
-	.AddSwaggerGen()
-	.AddSimplifyWebSwagger();
+	.AddSwaggerGen(x => x.AddSimplifyWebSwagger());
 
 // Configuration
 

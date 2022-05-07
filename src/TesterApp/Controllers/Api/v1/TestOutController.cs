@@ -1,20 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Simplify.Web;
 using Simplify.Web.Attributes;
+using Simplify.Web.Json.Responses;
+using TesterApp.ViewModels;
 
 namespace TesterApp.Controllers.Api.v1
 {
-	[Route("api/v{version:apiVersion}/weather-forecasts")]
-	[Produces("application/json")]
-	[ApiVersion("1.0")]
 	[Get("/api/v1/testOut")]
+	[Post("/api/v1/testOut")]
+	[ApiVersion("1.0")]
+	[Produces("application/json")]
+	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestViewModel))]
+	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public class TestOutController : Simplify.Web.Controller
 	{
-		[HttpGet]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public override ControllerResponse Invoke()
 		{
-			throw new NotImplementedException();
+			var model = new TestViewModel
+			{
+				Prop1 = "Hello",
+				Prop2 = "World"
+			};
+
+			return new Json(model);
 		}
 	}
 }

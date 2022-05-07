@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net5.0</TargetFrameworks>
+		<TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>nullable</WarningsAsErrors>
-		<OutputPath>bin\Any CPU\$(Configuration)\</OutputPath>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -16,7 +15,6 @@
 		<Product>Simplify</Product>
 		<Authors>Alexander Krylkov</Authors>
 		<Copyright>Licensed under LGPL</Copyright>
-
 		<PackageProjectUrl>https://web.simplifynet.dev</PackageProjectUrl>
 		<PackageIcon>icon.png</PackageIcon>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -25,8 +23,9 @@
 		<PackageReleaseNotes>See https://github.com/SimplifyNet/Simplify.Web.Swagger/tree/master/src/Simplify.Web.Swagger/CHANGELOG.md for details</PackageReleaseNotes>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
-		<PackageReference Include="Simplify.Web" Version="4.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="2.2.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.1" />
+		<PackageReference Include="Simplify.Web" Version="4.5.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\images\icon.png" Pack="true" Visible="false" PackagePath="" />
