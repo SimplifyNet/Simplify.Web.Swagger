@@ -34,7 +34,6 @@ namespace Simplify.Web.Swagger
 			return pathItem;
 		}
 
-
 		private static OpenApiOperation CreateOperation(ControllerAction item)
 		{
 			var operation = new OpenApiOperation();

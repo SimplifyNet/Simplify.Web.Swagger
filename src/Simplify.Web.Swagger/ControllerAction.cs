@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 
 namespace Simplify.Web.Swagger
@@ -15,6 +16,11 @@ namespace Simplify.Web.Swagger
 		/// Operation type
 		/// </summary>
 		public OperationType Type { get; set; }
+
+		/// <summary>
+		/// Controller responses
+		/// </summary>
+		public IList<OpenApiResponse> Responses = new List<OpenApiResponse>();
 
 		/// <summary>
 		/// Controller path

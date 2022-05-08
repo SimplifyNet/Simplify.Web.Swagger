@@ -18,6 +18,9 @@ public class DeleteController : Simplify.Web.Controller
 		if (RouteParameters.id <= 0)
 			return StatusCode(400, "User ID is invalid");
 
+		if (RouteParameters.id > 100)
+			return StatusCode(500, "Internal Server Error");
+
 		return NoContent();
 	}
 }
