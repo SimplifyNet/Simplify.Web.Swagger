@@ -20,7 +20,7 @@ namespace Simplify.Web.Swagger
 		/// <summary>
 		/// Controller responses
 		/// </summary>
-		public IList<OpenApiResponse> Responses = new List<OpenApiResponse>();
+		public IDictionary<int, OpenApiResponse> Responses = new Dictionary<int, OpenApiResponse>();
 
 		/// <summary>
 		/// Controller path

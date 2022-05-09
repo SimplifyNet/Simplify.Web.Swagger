@@ -46,6 +46,9 @@ namespace Simplify.Web.Swagger
 			if (item.Names.Summary != null)
 				operation.Summary = item.Names.Summary;
 
+			foreach (var response in item.Responses)
+				operation.Responses.Add(response.Key.ToString(), response.Value);
+
 			return operation;
 		}
 	}
