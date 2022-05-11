@@ -2,7 +2,8 @@
 
 [![Nuget Version](https://img.shields.io/nuget/v/Simplify.Web.Swagger)](https://www.nuget.org/packages/Simplify.Web.Swagger/)
 [![Nuget Download](https://img.shields.io/nuget/dt/Simplify.Web.Swagger)](https://www.nuget.org/packages/Simplify.Web.Swagger/)
-[![Build Package](https://github.com/SimplifyNet/Simplify.Web.Swagger/actions/workflows/build.yml/badge.svg)](https://github.com/SimplifyNet/Simplify.Web.Swagger/actions/workflows/build.yml)[![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/nuget/Simplify.Web.Swagger)](https://libraries.io/nuget/Simplify.Web.Swagger)
+[![Build Package](https://github.com/SimplifyNet/Simplify.Web.Swagger/actions/workflows/build.yml/badge.svg)](https://github.com/SimplifyNet/Simplify.Web.Swagger/actions/workflows/build.yml)
+[![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/nuget/Simplify.Web.Swagger)](https://libraries.io/nuget/Simplify.Web.Swagger)
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/SimplifyNet/Simplify.Web.Swagger)](https://www.codefactor.io/repository/github/simplifynet/Simplify.Web.Swagger)
 ![Platform](https://img.shields.io/badge/platform-.NET%206.0%20%7C%20.NET%20Standard%202.0-lightgrey)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](http://makeapullrequest.com)
