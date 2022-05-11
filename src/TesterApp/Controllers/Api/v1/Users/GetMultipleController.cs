@@ -2,15 +2,16 @@
 using Simplify.Web;
 using Simplify.Web.Attributes;
 using Simplify.Web.Json.Responses;
+using Simplify.Web.Swagger;
 using TesterApp.ViewModels;
 
 namespace TesterApp.Controllers.Api.v1.Users;
 
 [Get("/api/v1/users")]
 [ApiVersion("1.0")]
-[Produces("application/json")]
-[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IList<UserViewModel>))]
-[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+// [Produces("application/json")]
+[ProducesResponse(StatusCodes.Status200OK, typeof(IList<UserViewModel>), "application/json")]
+[ProducesResponse(StatusCodes.Status500InternalServerError)]
 public class GetMultipleController : Simplify.Web.Controller
 {
 	public override ControllerResponse Invoke()

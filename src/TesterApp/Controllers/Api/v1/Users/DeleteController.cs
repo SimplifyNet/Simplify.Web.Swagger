@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Simplify.Web;
 using Simplify.Web.Attributes;
+using Simplify.Web.Swagger;
 
 namespace TesterApp.Controllers.Api.v1.Users;
 
 [Delete("/api/v1/users/{id:int}")]
 [Authorize]
 [ApiVersion("1.0")]
-[Produces("application/text")]
-[ProducesResponseType(StatusCodes.Status204NoContent)]
-[ProducesResponseType(StatusCodes.Status400BadRequest)]
-[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+[ProducesResponse(StatusCodes.Status204NoContent)]
+[ProducesResponse(StatusCodes.Status400BadRequest)]
+[ProducesResponse(StatusCodes.Status500InternalServerError)]
 public class DeleteController : Simplify.Web.Controller
 {
 	public override ControllerResponse Invoke()

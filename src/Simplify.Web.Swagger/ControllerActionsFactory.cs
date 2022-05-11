@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Simplify.Web.Meta;
 
@@ -96,21 +95,24 @@ namespace Simplify.Web.Swagger
 		{
 			var items = new Dictionary<int, OpenApiResponse>();
 
-			var attributes = controllerType.GetCustomAttributes(typeof(ProducesResponseTypeAttribute), false);
+			var attributes = controllerType.GetCustomAttributes(typeof(ProducesResponseAttribute), false);
 
-			foreach (ProducesResponseTypeAttribute item in attributes)
+			foreach (ProducesResponseAttribute item in attributes)
 				items.Add(item.StatusCode, CreateResponse(item));
 
 			return items;
 		}
 
-		private static OpenApiResponse CreateResponse(ProducesResponseTypeAttribute producesResponse)
+		private static OpenApiResponse CreateResponse(ProducesResponseAttribute producesResponse)
 		{
 			var response = new OpenApiResponse();
 
 			response.Description = ResponseDescriptionMap
 				.FirstOrDefault((entry) => Regex.IsMatch(producesResponse.StatusCode.ToString(), entry.Key))
 				.Value;
+
+			foreach (var item in producesResponse.ContentTypes.Distinct())
+				response.Content.Add(item, new OpenApiMediaType());
 
 			return response;
 		}
