@@ -12,9 +12,15 @@
 
 ## Quick Start
 
-1. Add `Swashbuckle.AspNetCore.SwaggerGen` and `Swashbuckle.AspNetCore.SwaggerUI` packages to your project
+1. Add `Simplify.Web.Swagger`, `Swashbuckle.AspNetCore.SwaggerGen` and `Swashbuckle.AspNetCore.SwaggerUI` packages to your project
 
-1. Add `AddSimplifyWebSwagger` in `AddSwaggerGen` registration and `Simplify.Web` controllers will be scanned when generation Swagger.
+```xml
+<PackageReference Include="Simplify.Web.Swagger" Version="0.1.*" />
+<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.*" />
+<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.3.*" />
+```
+
+1. Add `AddSimplifyWebSwagger` in `AddSwaggerGen` registration and `Simplify.Web` controllers will be scanned during Swagger generation process.
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +29,7 @@ builder.Services.AddEndpointsApiExplorer()
  .AddSwaggerGen(x => x.AddSimplifyWebSwagger());
 ```
 
-3. Use swagger as in regular ASP.NET Core project
+3. Use Swagger as in regular ASP.NET Core project
 
 ```csharp
 var app = builder.Build();
@@ -49,7 +55,7 @@ public class GetController : Simplify.Web.Controller
 }
 ```
 
-5. After application started go to <http://localhost:5000/swagger/index.html> or <http://localhost:5000/swagger/swagger.json> to see generated Swagger
+5. After application started go to <http://localhost:5000/swagger/index.html> or <http://localhost:5000/swagger/v1/swagger.json> to see generated Swagger
 
 ## Contributing
 
