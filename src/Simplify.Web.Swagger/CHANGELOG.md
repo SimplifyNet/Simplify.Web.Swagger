@@ -7,6 +7,11 @@
 - Parameters display
 - Authorization display
 
+### Dependencies
+
+- Simplify.Web bump to 4.6
+- Microsoft.AspNetCore.Mvc.Versioning bump to 4.1
+
 ## [0.1] - 2022-05-11
 
 ### Added
