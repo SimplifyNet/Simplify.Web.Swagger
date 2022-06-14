@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
+using Simplify.Web.Routing;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Simplify.Web.Swagger
@@ -52,6 +53,8 @@ namespace Simplify.Web.Swagger
 			if (item.IsAuthorizationRequired)
 				AddSecurity(operation);
 
+			operation.Parameters = CreateParameters(item.ParsedPath);
+
 			return operation;
 		}
 
@@ -68,5 +71,16 @@ namespace Simplify.Web.Swagger
 					}, new List<string>()
 				}
 			});
+
+		private static IList<OpenApiParameter> CreateParameters(IControllerPath path) =>
+			path.Items
+				.Where(x => x is PathParameter)
+				.Cast<PathParameter>()
+				.Select(x => new OpenApiParameter
+				{
+					Name = x.Name,
+					In = ParameterLocation.Path,
+					AllowEmptyValue = false
+				}).ToList();
 	}
 }

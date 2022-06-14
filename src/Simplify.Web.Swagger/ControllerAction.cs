@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
+using Simplify.Web.Routing;
 
 namespace Simplify.Web.Swagger
 {
@@ -30,6 +31,11 @@ namespace Simplify.Web.Swagger
 			get => _path ?? throw new InvalidOperationException("Path is null");
 			set => _path = value;
 		}
+
+		/// <summary>
+		/// Controller parsed path
+		/// </summary>
+		public IControllerPath ParsedPath => new ControllerPathParser().Parse(Path);
 
 		/// <summary>
 		/// Controller names
