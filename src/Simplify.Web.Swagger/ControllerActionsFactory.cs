@@ -41,7 +41,8 @@ namespace Simplify.Web.Swagger
 				Type = HttpMethodToOperationType(method),
 				Path = route.StartsWith("/") ? route : "/" + route,
 				Names = CreateNames(item.ControllerType),
-				Responses = CreateResponses(item.ControllerType)
+				Responses = CreateResponses(item.ControllerType),
+				IsAuthorizationRequired = item.Security != null && item.Security.IsAuthorizationRequired
 			};
 
 		private static ControllerActionNames CreateNames(Type controllerType) =>

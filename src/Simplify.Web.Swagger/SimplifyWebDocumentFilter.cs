@@ -49,7 +49,24 @@ namespace Simplify.Web.Swagger
 			foreach (var response in item.Responses)
 				operation.Responses.Add(response.Key.ToString(), response.Value);
 
+			if (item.IsAuthorizationRequired)
+				AddSecurity(operation);
+
 			return operation;
 		}
+
+		private static void AddSecurity(OpenApiOperation operation) =>
+			operation.Security.Add(new OpenApiSecurityRequirement
+			{
+				{
+					new OpenApiSecurityScheme
+					{
+						Reference = new OpenApiReference {
+							Type = ReferenceType.SecurityScheme,
+							Id = "bearerAuth"
+						}
+					}, new List<string>()
+				}
+			});
 	}
 }

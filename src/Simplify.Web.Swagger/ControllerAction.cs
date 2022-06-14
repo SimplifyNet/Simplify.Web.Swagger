@@ -39,5 +39,10 @@ namespace Simplify.Web.Swagger
 			get => _names ?? throw new InvalidOperationException("Names is null");
 			set => _names = value;
 		}
+
+		/// <summary>
+		/// Gets or sets the value indicating whether controller requires user authorization.
+		/// </summary>
+		public bool IsAuthorizationRequired { get; set; }
 	}
 }
