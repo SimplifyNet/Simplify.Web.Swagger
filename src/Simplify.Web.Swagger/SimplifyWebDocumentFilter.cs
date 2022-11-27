@@ -16,7 +16,6 @@ namespace Simplify.Web.Swagger
 		/// </summary>
 		/// <param name="openApiDocument">The Open API document</param>
 		/// <param name="context">The context</param>
-
 		public void Apply(OpenApiDocument openApiDocument, DocumentFilterContext context)
 		{
 			foreach (var item in ControllerActionsFactory.CreateControllerActionsFromControllersMetaData()
