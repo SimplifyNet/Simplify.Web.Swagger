@@ -7,7 +7,7 @@
 		<ProjectReference Include="..\Simplify.Web.Swagger\Simplify.Web.Swagger.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Simplify.Web.Json" Version="2.2.4" />
+		<PackageReference Include="Simplify.Web.Json" Version="2.2.5" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
 	</ItemGroup>
