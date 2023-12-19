@@ -11,5 +11,5 @@ public static class SimplifyWebSwaggerServiceCollectionExtensions
 	/// <summary>
 	/// Add Simplify.Web controllers to Swagger documentation generation
 	/// </summary>
-	public static void AddSimplifyWebSwagger(this SwaggerGenOptions options, SimplifyWebSwaggerArgs? parameter = null) => options.DocumentFilter<SimplifyWebDocumentFilter>(parameter);
+	public static void AddSimplifyWebSwagger(this SwaggerGenOptions options, SimplifyWebSwaggerArgs? args = null) => options.DocumentFilter<SimplifyWebDocumentFilter>(args);
 }
