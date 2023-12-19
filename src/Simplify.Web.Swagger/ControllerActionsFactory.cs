@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.OpenApi.Models;
 using Simplify.Web.Meta;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Simplify.Web.Swagger
 {
@@ -25,23 +26,24 @@ namespace Simplify.Web.Swagger
 		/// Creates controller actions from Simplify.Web controller meta data
 		/// </summary>
 		/// <returns></returns>
-		public static IEnumerable<ControllerAction> CreateControllerActionsFromControllersMetaData() =>
+		public static IEnumerable<ControllerAction> CreateControllerActionsFromControllersMetaData(DocumentFilterContext context) =>
 			ControllersMetaStore.Current.ControllersMetaData
 				.Where(x => x.ExecParameters != null)
-				.SelectMany(CreateControllerActions);
+				.SelectMany(item => CreateControllerActions(item, context));
 
-		private static IEnumerable<ControllerAction> CreateControllerActions(IControllerMetaData item) =>
+		private static IEnumerable<ControllerAction> CreateControllerActions(IControllerMetaData item, DocumentFilterContext context) =>
 			item.ExecParameters!
 				.Routes
-				.Select(x => CreateControllerAction(x.Key, x.Value, item));
+				.Select(x => CreateControllerAction(x.Key, x.Value, item, context));
 
-		private static ControllerAction CreateControllerAction(HttpMethod method, string route, IControllerMetaData item) =>
+		private static ControllerAction CreateControllerAction(HttpMethod method, string route, IControllerMetaData item, DocumentFilterContext context) =>
 			new ControllerAction
 			{
 				Type = HttpMethodToOperationType(method),
 				Path = route.StartsWith("/") ? route : "/" + route,
 				Names = CreateNames(item.ControllerType),
 				Responses = CreateResponses(item.ControllerType),
+				RequestBody = CreateRequestBody(item.ControllerType, context),
 				IsAuthorizationRequired = item.Security != null && item.Security.IsAuthorizationRequired
 			};
 
@@ -91,6 +93,24 @@ namespace Simplify.Web.Swagger
 				HttpMethod.Options => OperationType.Options,
 				_ => OperationType.Get
 			};
+
+		private static OpenApiRequestBody CreateRequestBody(Type controllerType, DocumentFilterContext context)
+		{
+			var request = new OpenApiRequestBody();
+			var attributes = controllerType.GetCustomAttributes(typeof(ProducesRequestBodyAttribute), false);
+			
+			if (attributes.Length > 0)
+			{
+				var item = (ProducesRequestBodyAttribute) attributes.First();
+
+				request.Content = new Dictionary<string, OpenApiMediaType>
+				{
+					["application/json"] = new() { Schema = context.SchemaGenerator.GenerateSchema(item.Model, context.SchemaRepository) }
+				};
+			}
+
+			return request;
+		}
 
 		private static IDictionary<int, OpenApiResponse> CreateResponses(Type controllerType)
 		{

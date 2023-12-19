@@ -11,6 +11,14 @@ namespace Simplify.Web.Swagger
 	/// </summary>
 	public class SimplifyWebDocumentFilter : IDocumentFilter
 	{
+		private static SimplifyWebSwaggerArgs? _args;
+		
+		/// <summary>
+		/// Initializes an instance of <see cref="SimplifyWebDocumentFilter"/>.
+		/// </summary>
+		/// <param name="args">The registration args</param>
+		public SimplifyWebDocumentFilter(SimplifyWebSwaggerArgs? args) => _args = args;
+
 		/// <summary>
 		/// Applies current filter
 		/// </summary>
@@ -18,7 +26,7 @@ namespace Simplify.Web.Swagger
 		/// <param name="context">The context</param>
 		public void Apply(OpenApiDocument openApiDocument, DocumentFilterContext context)
 		{
-			foreach (var item in ControllerActionsFactory.CreateControllerActionsFromControllersMetaData()
+			foreach (var item in ControllerActionsFactory.CreateControllerActionsFromControllersMetaData(context)
 				.GroupBy(x => x.Path)
 				.Select(x => new KeyValuePair<string, OpenApiPathItem>(x.Key, CreatePathItem(x))))
 				openApiDocument?.Paths.Add(item.Key, item.Value);
@@ -49,27 +57,15 @@ namespace Simplify.Web.Swagger
 			foreach (var response in item.Responses)
 				operation.Responses.Add(response.Key.ToString(), response.Value);
 
-			if (item.IsAuthorizationRequired)
-				AddSecurity(operation);
-
 			operation.Parameters = CreateParameters(item.ParsedPath);
+			operation.RequestBody = item.RequestBody;
+
+			if (_args != null)
+				foreach (var parameter in _args.Parameters)
+					operation.Parameters.Add(parameter);
 
 			return operation;
 		}
-
-		private static void AddSecurity(OpenApiOperation operation) =>
-			operation.Security.Add(new OpenApiSecurityRequirement
-			{
-				{
-					new OpenApiSecurityScheme
-					{
-						Reference = new OpenApiReference {
-							Type = ReferenceType.SecurityScheme,
-							Id = "bearerAuth"
-						}
-					}, new List<string>()
-				}
-			});
 
 		private static IList<OpenApiParameter> CreateParameters(IControllerPath path) =>
 			path.Items
