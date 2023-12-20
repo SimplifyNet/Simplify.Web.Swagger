@@ -15,17 +15,21 @@ public class GetMultipleController : Simplify.Web.Controller
 {
 	public override ControllerResponse Invoke()
 	{
-		var items = new List<GroupViewModel>
+		var languageCode = Thread.CurrentThread.CurrentCulture.TwoLetterISOLanguageName;
+
+		var items = new List<GroupViewModel>();
+
+		switch (languageCode)
 		{
-			new GroupViewModel
-			{
-				Name = "Group 1"
-			},
-			new GroupViewModel
-			{
-				Name = "Group 2"
-			}
-		};
+			case "ru":
+				items.Add(new() {Name = "Группа 1"});
+				items.Add(new() {Name = "Группа 2"});
+				break;
+			default:
+				items.Add(new() {Name = "Group 1"});
+				items.Add(new() {Name = "Group 2"});
+				break;
+		}
 
 		// Items retrieve
 
