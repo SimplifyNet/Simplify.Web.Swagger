@@ -7,7 +7,7 @@ using TesterApp.ViewModels;
 
 namespace TesterApp.Controllers.Api.v1.Users;
 
-[Get("/api/v1/users/{id:int}")]
+[Get("/api/v1/users/{id}")]
 [ApiVersion("1.0")]
 [ProducesResponse(StatusCodes.Status200OK, typeof(UserViewModel), "application/json")]
 [ProducesResponse(StatusCodes.Status500InternalServerError)]
@@ -16,7 +16,7 @@ public class GetController : Simplify.Web.Controller
 	public override ControllerResponse Invoke() =>
 		 new Json(new UserViewModel
 		 {
-			 UserName = "User 1",
+			 UserName = $"User {RouteParameters.id}",
 			 CreationTime = DateTime.Now
 		 });
 }
