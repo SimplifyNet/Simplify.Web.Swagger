@@ -1,17 +1,22 @@
 {
 	"version": "0.2.0",
 	"configurations": [
-	{
-		"name": "TesterApp Launch",
-		"type": "coreclr",
-		"request": "launch",
-		"preLaunchTask": "Build",
-		"program": "${workspaceFolder}/src/TesterApp/bin/Debug/net6.0/TesterApp.dll",
-		"cwd": "${workspaceFolder}/src/TesterApp",
-		"internalConsoleOptions": "openOnSessionStart",
-		"env":
 		{
-			"ASPNETCORE_ENVIRONMENT": "Development"
+			"name": "TesterApp Launch",
+			"type": "coreclr",
+			"request": "launch",
+			"preLaunchTask": "Build",
+			"program": "${workspaceFolder}/src/TesterApp/bin/Debug/net6.0/TesterApp.dll",
+			"cwd": "${workspaceFolder}/src/TesterApp",
+			"internalConsoleOptions": "openOnSessionStart",
+			"serverReadyAction": {
+				"action": "openExternally",
+				"pattern": "Now listening on",
+				"uriFormat": "http://localhost:5000/swagger/index.html"
+			},
+			"env": {
+				"ASPNETCORE_ENVIRONMENT": "Development"
+			}
 		}
-	}]
+	]
 }
