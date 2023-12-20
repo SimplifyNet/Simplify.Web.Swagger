@@ -4,8 +4,9 @@
 
 ### Added
 
-- Request body display
+- Request body display and usage
 - SimplifyWebSwaggerArgs
+- Parameters display and string parameters execution
 
 ### Changed
 
@@ -13,7 +14,7 @@
 
 ### Dependencies
 
-- Simplify.Web bump to 4.8
+- Simplify.Web bump to 4.8.1
 - Swashbuckle.AspNetCore.SwaggerGen bump to 6.5
 
 ## [0.2] - 2022-06-14
