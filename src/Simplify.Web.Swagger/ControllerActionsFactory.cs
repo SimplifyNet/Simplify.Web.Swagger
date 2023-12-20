@@ -97,11 +97,11 @@ namespace Simplify.Web.Swagger
 		private static OpenApiRequestBody CreateRequestBody(Type controllerType, DocumentFilterContext context)
 		{
 			var request = new OpenApiRequestBody();
-			var attributes = controllerType.GetCustomAttributes(typeof(ProducesRequestBodyAttribute), false);
-			
+			var attributes = controllerType.GetCustomAttributes(typeof(RequestBodyAttribute), false);
+
 			if (attributes.Length > 0)
 			{
-				var item = (ProducesRequestBodyAttribute) attributes.First();
+				var item = (RequestBodyAttribute)attributes.First();
 
 				request.Content = new Dictionary<string, OpenApiMediaType>
 				{

@@ -9,7 +9,7 @@ namespace TesterApp.Controllers.Api.v1.Users;
 [Post("/api/v1/users")]
 [ApiVersion("1.0")]
 [Produces("application/text")]
-[ProducesRequestBody(typeof(UserAddViewModel))]
+[RequestBody(typeof(UserAddViewModel))]
 public class CreateController : AsyncController<UserAddViewModel>
 {
 	public override async Task<ControllerResponse> Invoke()
