@@ -7,7 +7,7 @@ using TesterApp.ViewModels;
 
 namespace TesterApp.Controllers.Api.v1.Users;
 
-[Get("/api/v1/users/{id}")]
+[Get("/api/v1/users/{id:int}")]
 [ApiVersion("1.0")]
 [ProducesResponse(StatusCodes.Status200OK, typeof(UserViewModel), "application/json")]
 [ProducesResponse(StatusCodes.Status500InternalServerError)]
