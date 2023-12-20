@@ -17,6 +17,11 @@ namespace Simplify.Web.Swagger
 		/// Operation type
 		/// </summary>
 		public OperationType Type { get; set; }
+		
+		/// <summary>
+		/// Request body
+		/// </summary>
+		public OpenApiRequestBody RequestBody = new OpenApiRequestBody();
 
 		/// <summary>
 		/// Controller responses
