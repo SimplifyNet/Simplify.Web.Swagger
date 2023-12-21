@@ -42,7 +42,7 @@ namespace Simplify.Web.Swagger
 				Type = HttpMethodToOperationType(method),
 				Path = route.StartsWith("/") ? route : "/" + route,
 				Names = CreateNames(item.ControllerType),
-				Responses = CreateResponses(item.ControllerType),
+				Responses = CreateResponses(item.ControllerType, context),
 				RequestBody = CreateRequestBody(item.ControllerType, context),
 				IsAuthorizationRequired = item.Security != null && item.Security.IsAuthorizationRequired
 			};
@@ -112,19 +112,19 @@ namespace Simplify.Web.Swagger
 			return request;
 		}
 
-		private static IDictionary<int, OpenApiResponse> CreateResponses(Type controllerType)
+		private static IDictionary<int, OpenApiResponse> CreateResponses(Type controllerType, DocumentFilterContext context)
 		{
 			var items = new Dictionary<int, OpenApiResponse>();
 
 			var attributes = controllerType.GetCustomAttributes(typeof(ProducesResponseAttribute), false);
 
 			foreach (ProducesResponseAttribute item in attributes)
-				items.Add(item.StatusCode, CreateResponse(item));
+				items.Add(item.StatusCode, CreateResponse(item, context));
 
 			return items;
 		}
 
-		private static OpenApiResponse CreateResponse(ProducesResponseAttribute producesResponse)
+		private static OpenApiResponse CreateResponse(ProducesResponseAttribute producesResponse, DocumentFilterContext context)
 		{
 			var response = new OpenApiResponse();
 
@@ -133,7 +133,9 @@ namespace Simplify.Web.Swagger
 				.Value;
 
 			foreach (var item in producesResponse.ContentTypes.Distinct())
-				response.Content.Add(item, new OpenApiMediaType());
+				response.Content.Add(item, producesResponse.Type is null 
+					? new OpenApiMediaType() 
+					: new () {Schema = context.SchemaGenerator.GenerateSchema(producesResponse.Type, context.SchemaRepository)});
 
 			return response;
 		}
