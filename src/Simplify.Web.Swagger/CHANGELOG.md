@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4] - 2023-12-21
+
+### Added
+
+- Response body display and usage
+
 ## [0.3] - 2023-12-20
 
 ### Added

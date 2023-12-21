@@ -9,7 +9,7 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-		<Version>0.3</Version>
+		<Version>0.4</Version>
 
 		<Description>Swagger extensions for Simplify.Web web-framework</Description>
 		<Product>Simplify</Product>
