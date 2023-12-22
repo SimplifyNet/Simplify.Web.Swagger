@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.1] - 2023-12-22
+
+### Fixed
+
+- Error while passing null args to AddSimplifyWebSwagger
+
 ## [0.4] - 2023-12-21
 
 ### Added
