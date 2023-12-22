@@ -12,6 +12,13 @@ namespace Simplify.Web.Swagger
 	public class SimplifyWebDocumentFilter : IDocumentFilter
 	{
 		private static SimplifyWebSwaggerArgs? _args;
+
+		/// <summary>
+		/// Initializes an instance of <see cref="SimplifyWebDocumentFilter"/>.
+		/// </summary>
+		public SimplifyWebDocumentFilter()
+		{
+		}
 		
 		/// <summary>
 		/// Initializes an instance of <see cref="SimplifyWebDocumentFilter"/>.
