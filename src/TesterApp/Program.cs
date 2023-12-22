@@ -10,13 +10,14 @@ using TesterApp.Setup;
 var builder = WebApplication.CreateBuilder(args);
 
 // DI
-
 DIContainer.Current
 	.RegisterAll()
 	.Verify();
 
+// Swagger
 builder.Services.AddEndpointsApiExplorer()
-	.AddSwaggerGen(x => {
+	.AddSwaggerGen(x =>
+	{
 		x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 		{
 			Name = "Authorization",
@@ -26,6 +27,7 @@ builder.Services.AddEndpointsApiExplorer()
 			BearerFormat = "JWT",
 			Description = "Input your Bearer token in this format - Bearer {your token here} to access this API",
 		});
+
 		x.AddSecurityRequirement(new OpenApiSecurityRequirement
 		{
 			{
@@ -45,7 +47,9 @@ builder.Services.AddEndpointsApiExplorer()
 		});
 
 		var args = new SimplifyWebSwaggerArgs();
-		var parameter = new OpenApiParameter{
+
+		var parameter = new OpenApiParameter
+		{
 			Name = "Accept-Language",
 			In = ParameterLocation.Header,
 			Description = "Language preference for the response.",
@@ -62,7 +66,7 @@ builder.Services.AddEndpointsApiExplorer()
 				}
 			}
 		};
-		
+
 		args.Parameters.Add(parameter);
 
 		x.AddSimplifyWebSwagger(args);
