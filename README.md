@@ -15,9 +15,9 @@
 1. Add `Simplify.Web.Swagger`, `Swashbuckle.AspNetCore.SwaggerGen` and `Swashbuckle.AspNetCore.SwaggerUI` packages to your project
 
 ```xml
-<PackageReference Include="Simplify.Web.Swagger" Version="0.1.*" />
-<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.*" />
-<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.3.*" />
+<PackageReference Include="Simplify.Web.Swagger" Version="1.0.*" />
+<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.*" />
+<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.6.*" />
 ```
 
 1. Add `AddSimplifyWebSwagger` in `AddSwaggerGen` registration and `Simplify.Web` controllers will be scanned during Swagger generation process.
@@ -45,11 +45,11 @@ app.Run();
 4. Add controller Swagger attributes (if needed)
 
 ```csharp
-[Get("/api/v1/users/{id:int}")]
+[Get("/api/v1/users/{id}")]
 [ApiVersion("1.0")]
 [ProducesResponse(StatusCodes.Status200OK, "application/json")]
 [ProducesResponse(StatusCodes.Status500InternalServerError)]
-public class GetController : Simplify.Web.Controller
+public class GetController : Controller2
 {
  ...
 }
