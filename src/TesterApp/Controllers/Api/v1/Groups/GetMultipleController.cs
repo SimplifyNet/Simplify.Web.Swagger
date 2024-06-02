@@ -4,6 +4,7 @@ using Simplify.Web;
 using Simplify.Web.Attributes;
 using Simplify.Web.Swagger;
 using TesterApp.ViewModels;
+using TesterApp.ViewModels.Grous;
 
 namespace TesterApp.Controllers.Api.v1.Groups;
 
