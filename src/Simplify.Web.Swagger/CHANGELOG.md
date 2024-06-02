@@ -5,6 +5,7 @@
 ### Dependencies
 
 - Simplify.Web bump to 5.0
+- Swashbuckle.AspNetCore.SwaggerGen bump to 6.6.2
 
 ## [0.4.1] - 2023-12-22
 
