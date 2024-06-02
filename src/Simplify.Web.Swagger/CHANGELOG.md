@@ -5,6 +5,7 @@
 ### Dependencies
 
 - Simplify.Web bump to 5.0
+- Switch to Asp.Versioning.Mvc 6.4.1 for .NET 6 package, .NET Standard 2.0 package remain Microsoft.AspNetCore.Mvc.Versioning 4.1 dependant
 - Swashbuckle.AspNetCore.SwaggerGen bump to 6.6.2
 
 ## [0.4.1] - 2023-12-22

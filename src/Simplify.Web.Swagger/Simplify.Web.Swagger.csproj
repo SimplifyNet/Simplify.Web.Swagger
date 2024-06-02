@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
 		<LangVersion>latest</LangVersion>
@@ -23,8 +23,15 @@
 
 		<PackageReleaseNotes>See https://github.com/SimplifyNet/Simplify.Web.Swagger/tree/master/src/Simplify.Web.Swagger/CHANGELOG.md for details</PackageReleaseNotes>
 	</PropertyGroup>
-	<ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+		<PackageReference Include="Asp.Versioning.Mvc" Version="6.4.1" />
+	</ItemGroup>
+	<ItemGroup
+		Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.0" />
+	</ItemGroup>
+	<ItemGroup>
+
 		<PackageReference Include="Simplify.Web" Version="5.0-pre01" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.2" />
 	</ItemGroup>

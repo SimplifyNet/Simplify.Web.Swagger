@@ -1,5 +1,5 @@
 ﻿using System.Net.Mime;
-using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 using Simplify.Web;
 using Simplify.Web.Attributes;
 using Simplify.Web.Swagger;
