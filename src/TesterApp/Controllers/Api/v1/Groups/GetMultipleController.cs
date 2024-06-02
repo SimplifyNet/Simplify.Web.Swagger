@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Simplify.Web;
 using Simplify.Web.Attributes;
-using Simplify.Web.Json.Responses;
 using Simplify.Web.Swagger;
 using TesterApp.ViewModels;
 
@@ -23,17 +22,18 @@ public class GetMultipleController : Simplify.Web.Controller
 		switch (languageCode)
 		{
 			case "ru":
-				items.Add(new() {Name = "Группа 1"});
-				items.Add(new() {Name = "Группа 2"});
+				items.Add(new() { Name = "Группа 1" });
+				items.Add(new() { Name = "Группа 2" });
 				break;
+
 			default:
-				items.Add(new() {Name = "Group 1"});
-				items.Add(new() {Name = "Group 2"});
+				items.Add(new() { Name = "Group 1" });
+				items.Add(new() { Name = "Group 2" });
 				break;
 		}
 
 		// Items retrieve
 
-		return new Json(items);
+		return Json(items);
 	}
 }

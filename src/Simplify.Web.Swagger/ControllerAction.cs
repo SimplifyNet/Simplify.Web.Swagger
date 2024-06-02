@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
-using Simplify.Web.Routing;
+using Simplify.Web.Controllers.Meta.Routing;
 
 namespace Simplify.Web.Swagger
 {
@@ -10,37 +10,45 @@ namespace Simplify.Web.Swagger
 	/// </summary>
 	public class ControllerAction
 	{
-		private string? _path;
 		private ControllerActionNames? _names;
+		private IControllerRoute? _controllerRoute;
+
+		/// <summary>
+		/// Request body
+		/// </summary>
+		public OpenApiRequestBody RequestBody { get; set; } = new();
+
+		/// <summary>
+		/// Controller responses
+		/// </summary>
+		public IDictionary<int, OpenApiResponse> Responses { get; set; } = new Dictionary<int, OpenApiResponse>();
 
 		/// <summary>
 		/// Operation type
 		/// </summary>
 		public OperationType Type { get; set; }
-		
-		/// <summary>
-		/// Request body
-		/// </summary>
-		public OpenApiRequestBody RequestBody = new OpenApiRequestBody();
-
-		/// <summary>
-		/// Controller responses
-		/// </summary>
-		public IDictionary<int, OpenApiResponse> Responses = new Dictionary<int, OpenApiResponse>();
 
 		/// <summary>
 		/// Controller path
 		/// </summary>
-		public string Path
-		{
-			get => _path ?? throw new InvalidOperationException("Path is null");
-			set => _path = value;
-		}
+#if NETSTANDARD2_0
+		public string Path => ControllerRoute.Path.StartsWith("/") ? ControllerRoute.Path : "/" + ControllerRoute.Path;
+#else
+		public string Path => ControllerRoute.Path.StartsWith('/') ? ControllerRoute.Path : "/" + ControllerRoute.Path;
+#endif
 
 		/// <summary>
-		/// Controller parsed path
+		/// Gets or sets the controller route.
 		/// </summary>
-		public IControllerPath ParsedPath => new ControllerPathParser().Parse(Path);
+		/// <value>
+		/// The controller route.
+		/// </value>
+		/// <exception cref="InvalidOperationException">ControllerRoute is null</exception>
+		public IControllerRoute ControllerRoute
+		{
+			get => _controllerRoute ?? throw new InvalidOperationException("ControllerRoute is null");
+			set => _controllerRoute = value;
+		}
 
 		/// <summary>
 		/// Controller names

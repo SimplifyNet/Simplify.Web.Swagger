@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Simplify.Web;
 using Simplify.Web.Attributes;
-using Simplify.Web.Json.Responses;
 using Simplify.Web.Swagger;
 using TesterApp.ViewModels;
 
@@ -14,7 +13,7 @@ namespace TesterApp.Controllers.Api.v1.Users;
 public class GetController : Simplify.Web.Controller
 {
 	public override ControllerResponse Invoke() =>
-		 new Json(new UserViewModel
+		 Json(new UserViewModel
 		 {
 			 UserName = $"User {RouteParameters.id}",
 			 CreationTime = DateTime.Now

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
-using Simplify.Web.Routing;
+using Simplify.Web.Controllers.Meta.Routing;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Simplify.Web.Swagger
@@ -11,7 +11,7 @@ namespace Simplify.Web.Swagger
 	/// </summary>
 	public class SimplifyWebDocumentFilter : IDocumentFilter
 	{
-		private static SimplifyWebSwaggerArgs? _args;
+		private readonly SimplifyWebSwaggerArgs? _args;
 
 		/// <summary>
 		/// Initializes an instance of <see cref="SimplifyWebDocumentFilter"/>.
@@ -19,7 +19,7 @@ namespace Simplify.Web.Swagger
 		public SimplifyWebDocumentFilter()
 		{
 		}
-		
+
 		/// <summary>
 		/// Initializes an instance of <see cref="SimplifyWebDocumentFilter"/>.
 		/// </summary>
@@ -29,17 +29,28 @@ namespace Simplify.Web.Swagger
 		/// <summary>
 		/// Applies current filter
 		/// </summary>
-		/// <param name="openApiDocument">The Open API document</param>
+		/// <param name="swaggerDoc">The Open API document</param>
 		/// <param name="context">The context</param>
-		public void Apply(OpenApiDocument openApiDocument, DocumentFilterContext context)
+		public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
 		{
 			foreach (var item in ControllerActionsFactory.CreateControllerActionsFromControllersMetaData(context)
 				.GroupBy(x => x.Path)
 				.Select(x => new KeyValuePair<string, OpenApiPathItem>(x.Key, CreatePathItem(x))))
-				openApiDocument?.Paths.Add(item.Key, item.Value);
+				swaggerDoc?.Paths.Add(item.Key, item.Value);
 		}
 
-		private static OpenApiPathItem CreatePathItem(IEnumerable<ControllerAction> actions)
+		private static IList<OpenApiParameter> CreateParameters(IControllerRoute path) =>
+			path.Items
+				.Where(x => x is PathParameter)
+				.Cast<PathParameter>()
+				.Select(x => new OpenApiParameter
+				{
+					Name = x.Name,
+					In = ParameterLocation.Path,
+					AllowEmptyValue = false
+				}).ToList();
+
+		private OpenApiPathItem CreatePathItem(IEnumerable<ControllerAction> actions)
 		{
 			var pathItem = new OpenApiPathItem();
 
@@ -49,7 +60,7 @@ namespace Simplify.Web.Swagger
 			return pathItem;
 		}
 
-		private static OpenApiOperation CreateOperation(ControllerAction item)
+		private OpenApiOperation CreateOperation(ControllerAction item)
 		{
 			var operation = new OpenApiOperation();
 
@@ -64,25 +75,16 @@ namespace Simplify.Web.Swagger
 			foreach (var response in item.Responses)
 				operation.Responses.Add(response.Key.ToString(), response.Value);
 
-			operation.Parameters = CreateParameters(item.ParsedPath);
+			operation.Parameters = CreateParameters(item.ControllerRoute);
 			operation.RequestBody = item.RequestBody;
 
-			if (_args != null)
-				foreach (var parameter in _args.Parameters)
-					operation.Parameters.Add(parameter);
+			if (_args == null)
+				return operation;
+
+			foreach (var parameter in _args.Parameters)
+				operation.Parameters.Add(parameter);
 
 			return operation;
 		}
-
-		private static IList<OpenApiParameter> CreateParameters(IControllerPath path) =>
-			path.Items
-				.Where(x => x is PathParameter)
-				.Cast<PathParameter>()
-				.Select(x => new OpenApiParameter
-				{
-					Name = x.Name,
-					In = ParameterLocation.Path,
-					AllowEmptyValue = false
-				}).ToList();
 	}
 }

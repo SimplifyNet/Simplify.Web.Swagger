@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.OpenApi.Models;
-using Simplify.Web.Meta;
+using Simplify.Web.Controllers.Meta;
+using Simplify.Web.Controllers.Meta.MetaStore;
+using Simplify.Web.Controllers.Meta.Routing;
+using Simplify.Web.Http;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Simplify.Web.Swagger
@@ -11,40 +14,66 @@ namespace Simplify.Web.Swagger
 	/// <summary>
 	/// Provides ControllerAction factory
 	/// </summary>
-	public class ControllerActionsFactory
+	public static class ControllerActionsFactory
 	{
+		private static readonly IReadOnlyCollection<KeyValuePair<string, string>> ResponseDescriptionMap =
+		[
+			new KeyValuePair<string, string>("1\\d{2}", "Information"),
+
+			new KeyValuePair<string, string>("201", "Created"),
+			new KeyValuePair<string, string>("202", "Accepted"),
+			new KeyValuePair<string, string>("204", "No Content"),
+			new KeyValuePair<string, string>("2\\d{2}", "Success"),
+
+			new KeyValuePair<string, string>("304", "Not Modified"),
+			new KeyValuePair<string, string>("3\\d{2}", "Redirect"),
+
+			new KeyValuePair<string, string>("400", "Bad Request"),
+			new KeyValuePair<string, string>("401", "Unauthorized"),
+			new KeyValuePair<string, string>("403", "Forbidden"),
+			new KeyValuePair<string, string>("404", "Not Found"),
+			new KeyValuePair<string, string>("405", "Method Not Allowed"),
+			new KeyValuePair<string, string>("406", "Not Acceptable"),
+			new KeyValuePair<string, string>("408", "Request Timeout"),
+			new KeyValuePair<string, string>("409", "Conflict"),
+			new KeyValuePair<string, string>("429", "Too Many Requests"),
+			new KeyValuePair<string, string>("4\\d{2}", "Client Error"),
+
+			new KeyValuePair<string, string>("5\\d{2}", "Server Error"),
+			new KeyValuePair<string, string>("default", "Error")
+		];
+
 		/// <summary>
 		/// Provides controller prefixes to remove
 		/// </summary>
-		public static IList<string> RemovePrefixes = new List<string>
-			{
-				"Controllers.",
-				"Api.v1."
-			};
+		public static IList<string> RemovePrefixes { get; } =
+		[
+			"Controllers.",
+			"Api.v1."
+		];
 
 		/// <summary>
 		/// Creates controller actions from Simplify.Web controller meta data
 		/// </summary>
 		/// <returns></returns>
 		public static IEnumerable<ControllerAction> CreateControllerActionsFromControllersMetaData(DocumentFilterContext context) =>
-			ControllersMetaStore.Current.ControllersMetaData
-				.Where(x => x.ExecParameters != null)
+			ControllersMetaStore.Current.RoutedControllers
 				.SelectMany(item => CreateControllerActions(item, context));
 
-		private static IEnumerable<ControllerAction> CreateControllerActions(IControllerMetaData item, DocumentFilterContext context) =>
+		private static IEnumerable<ControllerAction> CreateControllerActions(IControllerMetadata item, DocumentFilterContext context) =>
 			item.ExecParameters!
 				.Routes
 				.Select(x => CreateControllerAction(x.Key, x.Value, item, context));
 
-		private static ControllerAction CreateControllerAction(HttpMethod method, string route, IControllerMetaData item, DocumentFilterContext context) =>
-			new ControllerAction
+		private static ControllerAction CreateControllerAction(HttpMethod method, IControllerRoute route, IControllerMetadata item, DocumentFilterContext context) =>
+			new()
 			{
 				Type = HttpMethodToOperationType(method),
-				Path = route.StartsWith("/") ? route : "/" + route,
+				ControllerRoute = route,
 				Names = CreateNames(item.ControllerType),
 				Responses = CreateResponses(item.ControllerType, context),
 				RequestBody = CreateRequestBody(item.ControllerType, context),
-				IsAuthorizationRequired = item.Security != null && item.Security.IsAuthorizationRequired
+				IsAuthorizationRequired = item.Security is { IsAuthorizationRequired: true }
 			};
 
 		private static ControllerActionNames CreateNames(Type controllerType) =>
@@ -56,10 +85,9 @@ namespace Simplify.Web.Swagger
 
 			var index = src.LastIndexOf("/");
 
-			if (index == -1)
-				return new ControllerActionNames(src, src);
-
-			return new ControllerActionNames(src, src.Substring(0, index), src.Substring(index + 1));
+			return index == -1
+				? new ControllerActionNames(src, src)
+				: new ControllerActionNames(src, src.Substring(0, index), src.Substring(index + 1));
 		}
 
 		private static string FormatNameSource(string str)
@@ -99,72 +127,39 @@ namespace Simplify.Web.Swagger
 			var request = new OpenApiRequestBody();
 			var attributes = controllerType.GetCustomAttributes(typeof(RequestBodyAttribute), false);
 
-			if (attributes.Length > 0)
-			{
-				var item = (RequestBodyAttribute)attributes.First();
+			if (attributes.Length <= 0)
+				return request;
 
-				request.Content = new Dictionary<string, OpenApiMediaType>
-				{
-					["application/json"] = new() { Schema = context.SchemaGenerator.GenerateSchema(item.Model, context.SchemaRepository) }
-				};
-			}
+			var item = (RequestBodyAttribute)attributes[0];
+
+			request.Content = new Dictionary<string, OpenApiMediaType>
+			{
+				["application/json"] = new() { Schema = context.SchemaGenerator.GenerateSchema(item.Model, context.SchemaRepository) }
+			};
 
 			return request;
 		}
 
-		private static IDictionary<int, OpenApiResponse> CreateResponses(Type controllerType, DocumentFilterContext context)
-		{
-			var items = new Dictionary<int, OpenApiResponse>();
-
-			var attributes = controllerType.GetCustomAttributes(typeof(ProducesResponseAttribute), false);
-
-			foreach (ProducesResponseAttribute item in attributes)
-				items.Add(item.StatusCode, CreateResponse(item, context));
-
-			return items;
-		}
+		private static IDictionary<int, OpenApiResponse> CreateResponses(Type controllerType, DocumentFilterContext context) =>
+			controllerType.GetCustomAttributes(typeof(ProducesResponseAttribute), false)
+				.Cast<ProducesResponseAttribute>()
+				.ToDictionary(item => item.StatusCode, item => CreateResponse(item, context));
 
 		private static OpenApiResponse CreateResponse(ProducesResponseAttribute producesResponse, DocumentFilterContext context)
 		{
-			var response = new OpenApiResponse();
-
-			response.Description = ResponseDescriptionMap
+			var response = new OpenApiResponse
+			{
+				Description = ResponseDescriptionMap
 				.FirstOrDefault((entry) => Regex.IsMatch(producesResponse.StatusCode.ToString(), entry.Key))
-				.Value;
+				.Value
+			};
 
 			foreach (var item in producesResponse.ContentTypes.Distinct())
-				response.Content.Add(item, producesResponse.Type is null 
-					? new OpenApiMediaType() 
-					: new () {Schema = context.SchemaGenerator.GenerateSchema(producesResponse.Type, context.SchemaRepository)});
+				response.Content.Add(item, producesResponse.Type is null
+					? new OpenApiMediaType()
+					: new OpenApiMediaType { Schema = context.SchemaGenerator.GenerateSchema(producesResponse.Type, context.SchemaRepository) });
 
 			return response;
 		}
-
-		private static readonly IReadOnlyCollection<KeyValuePair<string, string>> ResponseDescriptionMap = new[]
-	  {
-		   new KeyValuePair<string, string>("1\\d{2}", "Information"),
-
-			new KeyValuePair<string, string>("201", "Created"),
-			new KeyValuePair<string, string>("202", "Accepted"),
-			new KeyValuePair<string, string>("204", "No Content"),
-			new KeyValuePair<string, string>("2\\d{2}", "Success"),
-
-			new KeyValuePair<string, string>("304", "Not Modified"),
-			new KeyValuePair<string, string>("3\\d{2}", "Redirect"),
-
-			new KeyValuePair<string, string>("400", "Bad Request"),
-			new KeyValuePair<string, string>("401", "Unauthorized"),
-			new KeyValuePair<string, string>("403", "Forbidden"),
-			new KeyValuePair<string, string>("404", "Not Found"),
-			new KeyValuePair<string, string>("405", "Method Not Allowed"),
-			new KeyValuePair<string, string>("406", "Not Acceptable"),
-			new KeyValuePair<string, string>("408", "Request Timeout"),
-			new KeyValuePair<string, string>("409", "Conflict"),
-			new KeyValuePair<string, string>("429", "Too Many Requests"),
-			new KeyValuePair<string, string>("4\\d{2}", "Client Error"),
-
-			new KeyValuePair<string, string>("5\\d{2}", "Server Error"),
-			new KeyValuePair<string, string>("default", "Error")
-		};
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using Simplify.DI;
 using Simplify.Web;
-using Simplify.Web.Json;
 
 namespace TesterApp.Setup
 {
@@ -8,8 +7,7 @@ namespace TesterApp.Setup
 	{
 		public static IDIContainerProvider RegisterAll(this IDIContainerProvider containerProvider)
 		{
-			containerProvider.RegisterSimplifyWeb()
-				.RegisterJsonModelBinder();
+			containerProvider.RegisterSimplifyWeb();
 
 			return containerProvider;
 		}

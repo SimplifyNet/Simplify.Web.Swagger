@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Simplify.Web;
 using Simplify.Web.Attributes;
-using Simplify.Web.Json.Responses;
 using Simplify.Web.Swagger;
 using TesterApp.ViewModels;
 
@@ -18,18 +17,18 @@ public class GetMultipleController : Simplify.Web.Controller
 	{
 		var items = new List<UserViewModel>
 		{
-			new UserViewModel
+			new()
 			{
 				UserName = "User 1",
 				CreationTime = DateTime.Now
 			},
-			new UserViewModel
+			new()
 			{
 				UserName = "User 2",
 				CreationTime = DateTime.Now.Subtract(TimeSpan.FromDays(1))
 			}
 		};
 
-		return new Json(items);
+		return Json(items);
 	}
 }

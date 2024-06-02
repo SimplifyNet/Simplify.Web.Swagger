@@ -2,8 +2,6 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Simplify.DI;
 using Simplify.Web;
-using Simplify.Web.Json.Model.Binding;
-using Simplify.Web.Model;
 using Simplify.Web.Swagger;
 using TesterApp.Setup;
 
@@ -59,11 +57,11 @@ builder.Services.AddEndpointsApiExplorer()
 			Schema = new OpenApiSchema
 			{
 				Default = new OpenApiString("en-US"),
-				Enum = new List<IOpenApiAny>
-				{
+				Enum =
+				[
 					new OpenApiString("en-US"),
-					new OpenApiString("ru-RU"),
-				}
+					new OpenApiString("ru-RU")
+				]
 			}
 		};
 
@@ -72,10 +70,6 @@ builder.Services.AddEndpointsApiExplorer()
 		x.AddSimplifyWebSwagger(args);
 	});
 
-// Configuration
-
-HttpModelHandler.RegisterModelBinder<JsonModelBinder>();
-
 // App
 
 var app = builder.Build();
@@ -83,6 +77,6 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseSimplifyWebWithoutRegistrations();
+app.UseSimplifyWeb();
 
-app.Run();
+await app.RunAsync();
