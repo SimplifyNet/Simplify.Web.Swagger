@@ -1,36 +1,38 @@
 namespace Simplify.Web.Swagger
 {
 	/// <summary>
-	/// provides controller action names
+	/// Provides the controller action names.
 	/// </summary>
-	public class ControllerActionNames
+	/// <remarks>
+	/// Initializes ControllerActionNames.
+	/// </remarks>
+	/// <param name="name">Controller full name</param>
+	/// <param name="groupName">Controller group name</param>
+	/// <param name="summary">Controller summary</param>
+	public class ControllerActionNames(string name, string groupName, string? summary = null)
 	{
 		/// <summary>
-		/// Initializes ControllerActionNames
+		/// Gets or sets the controller full name
 		/// </summary>
-		/// <param name="name">Controller full name</param>
-		/// <param name="groupName">Controller group name</param>
-		/// <param name="summary">Controller summary</param>
-		public ControllerActionNames(string name, string groupName, string? summary = null)
-		{
-			Name = name;
-			GroupName = groupName;
-			Summary = summary;
-		}
+		/// <value>
+		/// The name.
+		/// </value>
+		public string Name { get; set; } = name;
 
 		/// <summary>
-		/// Controller full name
+		/// Gets or sets the controller group name
 		/// </summary>
-		public string Name { get; set; }
+		/// <value>
+		/// The name of the group.
+		/// </value>
+		public string GroupName { get; set; } = groupName;
 
 		/// <summary>
-		/// Controller group name
+		/// Gets or sets the controller summary
 		/// </summary>
-		public string GroupName { get; set; }
-
-		/// <summary>
-		/// Controller summary
-		/// </summary>
-		public string? Summary { get; set; }
+		/// <value>
+		/// The summary.
+		/// </value>
+		public string? Summary { get; set; } = summary;
 	}
 }

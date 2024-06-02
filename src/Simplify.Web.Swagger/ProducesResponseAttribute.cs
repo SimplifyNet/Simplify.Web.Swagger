@@ -4,13 +4,13 @@ using System.Collections.Generic;
 namespace Simplify.Web.Swagger;
 
 /// <summary>
-/// A filter that specifies the type of the value and status code returned by the controller.
+/// Provides the filter that specifies the type of the value and status code returned by the controller.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 public class ProducesResponseAttribute : Attribute
 {
 	/// <summary>
-	/// Initializes an instance of <see cref="ProducesResponseAttribute"/>.
+	/// Initializes an instance of <see cref="ProducesResponseAttribute" />.
 	/// </summary>
 	/// <param name="statusCode">The HTTP response status code.</param>
 	/// <param name="contentType">The content type associated with the response.</param>
@@ -35,27 +35,36 @@ public class ProducesResponseAttribute : Attribute
 		if (!string.IsNullOrEmpty(contentType))
 			ContentTypes.Add(contentType!);
 
-		for (var i = 0; i < additionalContentTypes.Length; i++)
+		foreach (var t in additionalContentTypes)
 		{
-			if (string.IsNullOrEmpty(additionalContentTypes[i]))
+			if (string.IsNullOrEmpty(t))
 				continue;
 
-			ContentTypes.Add(additionalContentTypes[i]);
+			ContentTypes.Add(t);
 		}
 	}
 
 	/// <summary>
 	/// Gets the HTTP status code of the response.
 	/// </summary>
+	/// <value>
+	/// The status code.
+	/// </value>
 	public int StatusCode { get; }
 
 	/// <summary>
 	/// Gets the type of the value returned by a controller.
 	/// </summary>
+	/// <value>
+	/// The type.
+	/// </value>
 	public Type? Type { get; }
 
 	/// <summary>
 	/// Gets the HTTP content types of the response
 	/// </summary>
-	public IList<string> ContentTypes { get; } = new List<string>();
+	/// <value>
+	/// The content types.
+	/// </value>
+	public IList<string> ContentTypes { get; } = [];
 }

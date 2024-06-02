@@ -3,7 +3,7 @@ using System;
 namespace Simplify.Web.Swagger;
 
 /// <summary>
-/// A filter that specifies the request body received by the controller.
+/// Provides the filter that specifies the request body received by the controller.
 /// </summary>
 /// <seealso cref="Attribute" />
 /// <remarks>
@@ -16,5 +16,8 @@ public class RequestBodyAttribute(Type model) : Attribute
 	/// <summary>
 	/// Request body model type
 	/// </summary>
+	/// <value>
+	/// The model.
+	/// </value>
 	public Type Model { get; private set; } = model ?? throw new ArgumentNullException(nameof(model));
 }

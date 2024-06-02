@@ -7,21 +7,22 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace Simplify.Web.Swagger
 {
 	/// <summary>
-	/// Provides Swagger DocumentFilter for Simplify.Web framework
+	/// Provides the Swagger <see cref="IDocumentFilter" /> implementation for Simplify.Web framework.
 	/// </summary>
+	/// <seealso cref="IDocumentFilter" />
 	public class SimplifyWebDocumentFilter : IDocumentFilter
 	{
 		private readonly SimplifyWebSwaggerArgs? _args;
 
 		/// <summary>
-		/// Initializes an instance of <see cref="SimplifyWebDocumentFilter"/>.
+		/// Initializes an instance of <see cref="SimplifyWebDocumentFilter" />.
 		/// </summary>
 		public SimplifyWebDocumentFilter()
 		{
 		}
 
 		/// <summary>
-		/// Initializes an instance of <see cref="SimplifyWebDocumentFilter"/>.
+		/// Initializes an instance of <see cref="SimplifyWebDocumentFilter" />.
 		/// </summary>
 		/// <param name="args">The registration args</param>
 		public SimplifyWebDocumentFilter(SimplifyWebSwaggerArgs? args) => _args = args;

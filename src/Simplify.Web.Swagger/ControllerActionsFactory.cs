@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 namespace Simplify.Web.Swagger
 {
 	/// <summary>
-	/// Provides ControllerAction factory
+	/// Provides the controller action factory.
 	/// </summary>
 	public static class ControllerActionsFactory
 	{
@@ -44,8 +44,11 @@ namespace Simplify.Web.Swagger
 		];
 
 		/// <summary>
-		/// Provides controller prefixes to remove
+		/// Gets the remove prefixes.
 		/// </summary>
+		/// <value>
+		/// The remove prefixes.
+		/// </value>
 		public static IList<string> RemovePrefixes { get; } =
 		[
 			"Controllers.",
@@ -53,9 +56,9 @@ namespace Simplify.Web.Swagger
 		];
 
 		/// <summary>
-		/// Creates controller actions from Simplify.Web controller meta data
+		/// Creates the controller actions from controllers metadata.
 		/// </summary>
-		/// <returns></returns>
+		/// <param name="context">The context.</param>
 		public static IEnumerable<ControllerAction> CreateControllerActionsFromControllersMetaData(DocumentFilterContext context) =>
 			ControllersMetaStore.Current.RoutedControllers
 				.SelectMany(item => CreateControllerActions(item, context));
