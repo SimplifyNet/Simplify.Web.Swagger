@@ -37,9 +37,9 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseSimplifyWebWithoutRegistrations();
+app.UseSimplifyWeb();
 
-app.Run();
+await app.RunAsync();
 ```
 
 4. Add controller Swagger attributes (if needed)
