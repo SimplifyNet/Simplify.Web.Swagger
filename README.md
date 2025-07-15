@@ -6,7 +6,6 @@
 [![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/nuget/Simplify.Web.Swagger)](https://libraries.io/nuget/Simplify.Web.Swagger)
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/SimplifyNet/Simplify.Web.Swagger)](https://www.codefactor.io/repository/github/simplifynet/Simplify.Web.Swagger)
 ![Platform](https://img.shields.io/badge/platform-.NET%206.0%20%7C%20.NET%20Standard%202.0-lightgrey)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](http://makeapullrequest.com)
 
 `Simplify.Web.Swagger` is a package which provides Swagger generation for [Simplify.Web](https://github.com/SimplifyNet/Simplify.Web) web-framework controllers.
 
@@ -20,7 +19,7 @@
 <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.6.*" />
 ```
 
-1. Add `AddSimplifyWebSwagger` in `AddSwaggerGen` registration and `Simplify.Web` controllers will be scanned during Swagger generation process.
+2. Add `AddSimplifyWebSwagger` in `AddSwaggerGen` registration and `Simplify.Web` controllers will be scanned during Swagger generation process.
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
@@ -88,4 +87,4 @@ Additional extensions to Simplify.Web live in their own repositories on GitHub. 
 
 ## License
 
-Licensed under the GNU LESSER GENERAL PUBLIC LICENSE
+Licensed under the GNU Lesser General Public License
