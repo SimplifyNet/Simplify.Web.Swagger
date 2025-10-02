@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.0] - 2025-10-02
+
+### Added
+
+- ContentType field in RequestBody attribute
+
 ## [1.0.0] - 2024-06-05
 
 ### Dependencies
