@@ -10,8 +10,9 @@ namespace Simplify.Web.Swagger;
 /// Initializes an instance of <see cref="RequestBodyAttribute" />.
 /// </remarks>
 /// <param name="model">The request body model type.</param>
+/// <param name="contentType">The content type associated with the request.</param>
 [AttributeUsage(AttributeTargets.Class)]
-public class RequestBodyAttribute(Type model) : Attribute
+public class RequestBodyAttribute(Type model, string contentType = "application/json") : Attribute
 {
 	/// <summary>
 	/// Request body model type
@@ -20,4 +21,12 @@ public class RequestBodyAttribute(Type model) : Attribute
 	/// The model.
 	/// </value>
 	public Type Model { get; private set; } = model ?? throw new ArgumentNullException(nameof(model));
+
+	/// <summary>
+	/// Gets the type of the content.
+	/// </summary>
+	/// <value>
+	/// The type of the content.
+	/// </value>
+	public string ContentType { get; private set; } = contentType;
 }
