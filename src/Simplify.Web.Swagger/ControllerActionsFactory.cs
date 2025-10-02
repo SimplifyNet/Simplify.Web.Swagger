@@ -137,7 +137,7 @@ public static class ControllerActionsFactory
 
 		request.Content = new Dictionary<string, OpenApiMediaType>
 		{
-			["application/json"] = new() { Schema = context.SchemaGenerator.GenerateSchema(item.Model, context.SchemaRepository) }
+			[item.ContentType] = new() { Schema = context.SchemaGenerator.GenerateSchema(item.Model, context.SchemaRepository) }
 		};
 
 		return request;
