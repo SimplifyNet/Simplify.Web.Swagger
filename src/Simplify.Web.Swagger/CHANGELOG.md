@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.0] - 2025-10-10
+
+### Removed
+
+.NET 6.0 support
+.NET Standard 2.0 support
+
+### Added
+
+.NET 9.0 explicit support
+.NET 8.0 explicit support
+
+### Dependencies
+
+- Simplify.Web bump to 5.1
+- Asp.Versioning.Mvc bump to 8.1
+- Swashbuckle.AspNetCore.SwaggerGen bump to 9.0.6
+
 ## [1.1.0] - 2025-10-02
 
 ### Added
