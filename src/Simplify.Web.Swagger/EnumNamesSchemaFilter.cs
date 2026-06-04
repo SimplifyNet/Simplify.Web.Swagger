@@ -11,19 +11,19 @@ namespace Simplify.Web.Swagger;
 /// </summary>
 public class EnumNamesSchemaFilter : ISchemaFilter
 {
-    /// <inheritdoc />
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
-    {
-        if (!context.Type.IsEnum)
-            return;
+	/// <inheritdoc />
+	public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+	{
+		if (!context.Type.IsEnum)
+			return;
 
-        var names = Enum.GetNames(context.Type);
-        var values = Enum.GetValues(context.Type).Cast<int>().ToArray();
+		var names = Enum.GetNames(context.Type);
+		var values = Enum.GetValues(context.Type).Cast<int>().ToArray();
 
-        var varnames = new OpenApiArray();
-        foreach (var name in names)
-            varnames.Add(new OpenApiString(name));
+		var varnames = new OpenApiArray();
+		foreach (var name in names)
+			varnames.Add(new OpenApiString(name));
 
-        schema.Extensions["names"] = varnames;
-    }
+		schema.Extensions["names"] = varnames;
+	}
 }
