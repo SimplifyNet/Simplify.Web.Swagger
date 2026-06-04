@@ -19,12 +19,14 @@ public class GetMultipleController : Controller
 			new()
 			{
 				UserName = "User 1",
-				CreationTime = DateTime.Now
+				CreationTime = DateTime.Now,
+				Role = UserRole.Admin
 			},
 			new()
 			{
 				UserName = "User 2",
-				CreationTime = DateTime.Now.Subtract(TimeSpan.FromDays(1))
+				CreationTime = DateTime.Now.Subtract(TimeSpan.FromDays(1)),
+				Role = UserRole.User
 			}
 		};
 

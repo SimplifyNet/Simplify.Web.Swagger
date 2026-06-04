@@ -19,5 +19,7 @@ public static class SimplifyWebSwaggerServiceCollectionExtensions
 			options.DocumentFilter<SimplifyWebDocumentFilter>();
 		else
 			options.DocumentFilter<SimplifyWebDocumentFilter>(args);
+
+		options.SchemaFilter<EnumNamesSchemaFilter>();
 	}
 }
