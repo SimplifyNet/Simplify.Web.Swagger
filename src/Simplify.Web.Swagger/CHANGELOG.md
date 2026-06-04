@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0] - Unreleased
+
+### Dependencies
+
+- Simplify.Web bump to 5.2
+- Asp.Versioning.Mvc bump to 8.1.1
+
 ## [1.2.0] - 2025-10-10
 
 ### Removed
