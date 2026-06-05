@@ -1,13 +1,14 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
+using Swashbuckle.AspNetCore.SwaggerGen;
 #if NET10_0
+using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using Microsoft.OpenApi;
 #else
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 #endif
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Simplify.Web.Swagger;
 
@@ -26,12 +27,16 @@ public class EnumNamesSchemaFilter : ISchemaFilter
 		if (schema is not OpenApiSchema concreteSchema)
 			return;
 
+		var names = Enum.GetNames(context.Type);
+		var values = Enum.GetValues(context.Type).Cast<object>().ToArray();
+
 		var varnames = new JsonArray();
-		foreach (var name in Enum.GetNames(context.Type))
+		foreach (var name in names)
 			varnames.Add(name);
 
 		concreteSchema.Extensions ??= new Dictionary<string, IOpenApiExtension>();
-		concreteSchema.Extensions["names"] = new JsonNodeExtension(varnames);
+		concreteSchema.Extensions["x-varnames"] = new JsonNodeExtension(varnames);
+		concreteSchema.Description = BuildDescription(names, values);
 	}
 #else
 	public void Apply(OpenApiSchema schema, SchemaFilterContext context)
@@ -39,11 +44,18 @@ public class EnumNamesSchemaFilter : ISchemaFilter
 		if (!context.Type.IsEnum)
 			return;
 
+		var names = Enum.GetNames(context.Type);
+		var values = Enum.GetValues(context.Type).Cast<object>().ToArray();
+
 		var varnames = new OpenApiArray();
-		foreach (var name in Enum.GetNames(context.Type))
+		foreach (var name in names)
 			varnames.Add(new OpenApiString(name));
 
-		schema.Extensions["names"] = varnames;
+		schema.Extensions["x-varnames"] = varnames;
+		schema.Description = BuildDescription(names, values);
 	}
 #endif
+
+	private static string BuildDescription(string[] names, object[] values) =>
+		string.Join(", ", names.Select((name, i) => $"{Convert.ToInt64(values[i])} = {name}"));
 }

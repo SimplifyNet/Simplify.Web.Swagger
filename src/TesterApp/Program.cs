@@ -8,33 +8,31 @@ using TesterApp.Setup;
 var builder = WebApplication.CreateBuilder(args);
 
 // DI
-DIContainer.Current
-	.RegisterAll()
-	.Verify();
+DIContainer.Current.RegisterAll().Verify();
 
 // Swagger
-builder.Services.AddEndpointsApiExplorer()
+builder
+	.Services.AddEndpointsApiExplorer()
 	.AddSwaggerGen(x =>
 	{
-		x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-		{
-			Name = "Authorization",
-			In = ParameterLocation.Header,
-			Type = SecuritySchemeType.ApiKey,
-			Scheme = "Bearer",
-			BearerFormat = "JWT",
-			Description = "Input your Bearer token in this format - Bearer {your token here} to access this API",
-		});
-
-		x.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
-		{
+		x.AddSecurityDefinition(
+			"Bearer",
+			new OpenApiSecurityScheme
 			{
-				new OpenApiSecuritySchemeReference("Bearer"),
-				new List<string>()
+				Name = "Authorization",
+				In = ParameterLocation.Header,
+				Type = SecuritySchemeType.ApiKey,
+				Scheme = "Bearer",
+				BearerFormat = "JWT",
+				Description =
+					"Input your Bearer token in this format - Bearer {your token here} to access this API",
 			}
-		});
+		);
 
-		var args = new SimplifyWebSwaggerArgs();
+		var swaggerArgs = new SimplifyWebSwaggerArgs
+		{
+			SecuritySchemeName = "Bearer"
+		};
 
 		var parameter = new OpenApiParameter
 		{
@@ -47,17 +45,13 @@ builder.Services.AddEndpointsApiExplorer()
 			Schema = new OpenApiSchema
 			{
 				Default = "en-US",
-				Enum =
-				[
-					(JsonNode)"en-US",
-					(JsonNode)"ru-RU"
-				]
-			}
+				Enum = [(JsonNode)"en-US", (JsonNode)"ru-RU"],
+			},
 		};
 
-		args.Parameters.Add(parameter);
+		swaggerArgs.Parameters.Add(parameter);
 
-		x.AddSimplifyWebSwagger(args);
+		x.AddSimplifyWebSwagger(swaggerArgs);
 	});
 
 // App
