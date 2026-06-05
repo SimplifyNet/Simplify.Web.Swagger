@@ -1,6 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+#if NET10_0
+using Microsoft.OpenApi;
+#else
+using System.Net.Http;
 using Microsoft.OpenApi.Models;
+#endif
 using Simplify.Web.Controllers.Meta.Routing;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -40,6 +45,18 @@ public class SimplifyWebDocumentFilter : IDocumentFilter
 			swaggerDoc?.Paths.Add(item.Key, item.Value);
 	}
 
+#if NET10_0
+	private static IList<IOpenApiParameter> CreateParameters(IControllerRoute path) =>
+		path.Items
+			.Where(x => x is PathParameter)
+			.Cast<PathParameter>()
+			.Select(x => (IOpenApiParameter)new OpenApiParameter
+			{
+				Name = x.Name,
+				In = ParameterLocation.Path,
+				AllowEmptyValue = false
+			}).ToList();
+#else
 	private static IList<OpenApiParameter> CreateParameters(IControllerRoute path) =>
 		path.Items
 			.Where(x => x is PathParameter)
@@ -50,6 +67,7 @@ public class SimplifyWebDocumentFilter : IDocumentFilter
 				In = ParameterLocation.Path,
 				AllowEmptyValue = false
 			}).ToList();
+#endif
 
 	private OpenApiPathItem CreatePathItem(IEnumerable<ControllerAction> actions)
 	{
@@ -65,16 +83,23 @@ public class SimplifyWebDocumentFilter : IDocumentFilter
 	{
 		var operation = new OpenApiOperation();
 
-		operation.Tags.Add(new OpenApiTag
-		{
-			Name = item.Names.GroupName
-		});
+#if NET10_0
+		operation.Tags ??= new HashSet<OpenApiTagReference>();
+		operation.Tags.Add(new OpenApiTagReference(item.Names.GroupName));
+#else
+		operation.Tags.Add(new OpenApiTag { Name = item.Names.GroupName });
+#endif
 
 		if (item.Names.Summary != null)
 			operation.Summary = item.Names.Summary;
 
 		foreach (var response in item.Responses)
+		{
+#if NET10_0
+			operation.Responses ??= new OpenApiResponses();
+#endif
 			operation.Responses.Add(response.Key.ToString(), response.Value);
+		}
 
 		operation.Parameters = CreateParameters(item.ControllerRoute);
 		operation.RequestBody = item.RequestBody;

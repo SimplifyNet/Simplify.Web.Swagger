@@ -2,12 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+#if NET10_0
+using Microsoft.OpenApi;
+#else
 using Microsoft.OpenApi.Models;
+#endif
 using Simplify.Web.Controllers.Meta;
 using Simplify.Web.Controllers.Meta.MetaStore;
 using Simplify.Web.Controllers.Meta.Routing;
 using Simplify.Web.Http;
 using Swashbuckle.AspNetCore.SwaggerGen;
+#if NET10_0
+using NetHttpMethod = System.Net.Http.HttpMethod;
+#endif
 
 namespace Simplify.Web.Swagger;
 
@@ -113,6 +120,19 @@ public static class ControllerActionsFactory
 		return str;
 	}
 
+#if NET10_0
+	private static NetHttpMethod HttpMethodToOperationType(HttpMethod method) =>
+		method switch
+		{
+			HttpMethod.Get => NetHttpMethod.Get,
+			HttpMethod.Post => NetHttpMethod.Post,
+			HttpMethod.Put => NetHttpMethod.Put,
+			HttpMethod.Patch => NetHttpMethod.Patch,
+			HttpMethod.Delete => NetHttpMethod.Delete,
+			HttpMethod.Options => NetHttpMethod.Options,
+			_ => NetHttpMethod.Get
+		};
+#else
 	private static OperationType HttpMethodToOperationType(HttpMethod method) =>
 		method switch
 		{
@@ -124,6 +144,7 @@ public static class ControllerActionsFactory
 			HttpMethod.Options => OperationType.Options,
 			_ => OperationType.Get
 		};
+#endif
 
 	private static OpenApiRequestBody CreateRequestBody(Type controllerType, DocumentFilterContext context)
 	{
@@ -158,9 +179,14 @@ public static class ControllerActionsFactory
 		};
 
 		foreach (var item in producesResponse.ContentTypes.Distinct())
+		{
+#if NET10_0
+			response.Content ??= new Dictionary<string, OpenApiMediaType>();
+#endif
 			response.Content.Add(item, producesResponse.Type is null
 				? new OpenApiMediaType()
 				: new OpenApiMediaType { Schema = context.SchemaGenerator.GenerateSchema(producesResponse.Type, context.SchemaRepository) });
+		}
 
 		return response;
 	}

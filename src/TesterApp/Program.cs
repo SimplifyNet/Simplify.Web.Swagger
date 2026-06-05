@@ -1,5 +1,5 @@
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+using System.Text.Json.Nodes;
+using Microsoft.OpenApi;
 using Simplify.DI;
 using Simplify.Web;
 using Simplify.Web.Swagger;
@@ -26,20 +26,10 @@ builder.Services.AddEndpointsApiExplorer()
 			Description = "Input your Bearer token in this format - Bearer {your token here} to access this API",
 		});
 
-		x.AddSecurityRequirement(new OpenApiSecurityRequirement
+		x.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
 		{
 			{
-				new OpenApiSecurityScheme
-				{
-					Reference = new OpenApiReference
-					{
-						Type = ReferenceType.SecurityScheme,
-						Id = "Bearer",
-					},
-					Scheme = "Bearer",
-					Name = "Bearer",
-					In = ParameterLocation.Header,
-				},
+				new OpenApiSecuritySchemeReference("Bearer"),
 				new List<string>()
 			}
 		});
@@ -53,14 +43,14 @@ builder.Services.AddEndpointsApiExplorer()
 			Description = "Language preference for the response.",
 			Required = true,
 			AllowEmptyValue = true,
-			Example = new OpenApiString("en-US"),
+			Example = "en-US",
 			Schema = new OpenApiSchema
 			{
-				Default = new OpenApiString("en-US"),
+				Default = "en-US",
 				Enum =
 				[
-					new OpenApiString("en-US"),
-					new OpenApiString("ru-RU")
+					(JsonNode)"en-US",
+					(JsonNode)"ru-RU"
 				]
 			}
 		};

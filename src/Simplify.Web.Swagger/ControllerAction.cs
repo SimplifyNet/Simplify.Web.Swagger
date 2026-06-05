@@ -1,6 +1,11 @@
 using System;
 using System.Collections.Generic;
+#if NET10_0
+using Microsoft.OpenApi;
+using NetHttpMethod = System.Net.Http.HttpMethod;
+#else
 using Microsoft.OpenApi.Models;
+#endif
 using Simplify.Web.Controllers.Meta.Routing;
 
 namespace Simplify.Web.Swagger;
@@ -35,7 +40,11 @@ public class ControllerAction
 	/// <value>
 	/// The type.
 	/// </value>
+#if NET10_0
+	public NetHttpMethod Type { get; set; } = NetHttpMethod.Get;
+#else
 	public OperationType Type { get; set; }
+#endif
 
 	/// <summary>
 	/// Gets the path.
