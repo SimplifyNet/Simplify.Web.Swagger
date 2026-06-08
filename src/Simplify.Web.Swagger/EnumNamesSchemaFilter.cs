@@ -1,14 +1,9 @@
 using System;
-using System.Linq;
-using Swashbuckle.AspNetCore.SwaggerGen;
-#if NET10_0
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Nodes;
 using Microsoft.OpenApi;
-#else
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
-#endif
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Simplify.Web.Swagger;
 
@@ -18,7 +13,6 @@ namespace Simplify.Web.Swagger;
 public class EnumNamesSchemaFilter : ISchemaFilter
 {
 	/// <inheritdoc />
-#if NET10_0
 	public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
 	{
 		if (!context.Type.IsEnum)
@@ -38,23 +32,6 @@ public class EnumNamesSchemaFilter : ISchemaFilter
 		concreteSchema.Extensions["x-varnames"] = new JsonNodeExtension(varnames);
 		concreteSchema.Description = BuildDescription(names, values);
 	}
-#else
-	public void Apply(OpenApiSchema schema, SchemaFilterContext context)
-	{
-		if (!context.Type.IsEnum)
-			return;
-
-		var names = Enum.GetNames(context.Type);
-		var values = Enum.GetValues(context.Type).Cast<object>().ToArray();
-
-		var varnames = new OpenApiArray();
-		foreach (var name in names)
-			varnames.Add(new OpenApiString(name));
-
-		schema.Extensions["x-varnames"] = varnames;
-		schema.Description = BuildDescription(names, values);
-	}
-#endif
 
 	private static string BuildDescription(string[] names, object[] values) =>
 		string.Join(", ", names.Select((name, i) => $"{Convert.ToInt64(values[i])} = {name}"));
