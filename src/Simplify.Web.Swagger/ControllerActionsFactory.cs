@@ -2,12 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.OpenApi.Models;
 using Simplify.Web.Controllers.Meta;
 using Simplify.Web.Controllers.Meta.MetaStore;
 using Simplify.Web.Controllers.Meta.Routing;
 using Simplify.Web.Http;
 using Swashbuckle.AspNetCore.SwaggerGen;
+#if NET10_0
+using Microsoft.OpenApi;
+using NetHttpMethod = System.Net.Http.HttpMethod;
+#else
+using Microsoft.OpenApi.Models;
+#endif
 
 namespace Simplify.Web.Swagger;
 
@@ -16,18 +21,17 @@ namespace Simplify.Web.Swagger;
 /// </summary>
 public static class ControllerActionsFactory
 {
-	private static readonly IReadOnlyCollection<KeyValuePair<string, string>> ResponseDescriptionMap =
+	private static readonly IReadOnlyCollection<
+		KeyValuePair<string, string>
+	> ResponseDescriptionMap =
 	[
 		new KeyValuePair<string, string>("1\\d{2}", "Information"),
-
 		new KeyValuePair<string, string>("201", "Created"),
 		new KeyValuePair<string, string>("202", "Accepted"),
 		new KeyValuePair<string, string>("204", "No Content"),
 		new KeyValuePair<string, string>("2\\d{2}", "Success"),
-
 		new KeyValuePair<string, string>("304", "Not Modified"),
 		new KeyValuePair<string, string>("3\\d{2}", "Redirect"),
-
 		new KeyValuePair<string, string>("400", "Bad Request"),
 		new KeyValuePair<string, string>("401", "Unauthorized"),
 		new KeyValuePair<string, string>("403", "Forbidden"),
@@ -38,9 +42,8 @@ public static class ControllerActionsFactory
 		new KeyValuePair<string, string>("409", "Conflict"),
 		new KeyValuePair<string, string>("429", "Too Many Requests"),
 		new KeyValuePair<string, string>("4\\d{2}", "Client Error"),
-
 		new KeyValuePair<string, string>("5\\d{2}", "Server Error"),
-		new KeyValuePair<string, string>("default", "Error")
+		new KeyValuePair<string, string>("default", "Error"),
 	];
 
 	/// <summary>
@@ -49,26 +52,33 @@ public static class ControllerActionsFactory
 	/// <value>
 	/// The remove prefixes.
 	/// </value>
-	public static IList<string> RemovePrefixes { get; } =
-	[
-		"Controllers.",
-		"Api.v1."
-	];
+	public static IList<string> RemovePrefixes { get; } = ["Controllers.", "Api.v1."];
 
 	/// <summary>
 	/// Creates the controller actions from controllers metadata.
 	/// </summary>
 	/// <param name="context">The context.</param>
-	public static IEnumerable<ControllerAction> CreateControllerActionsFromControllersMetaData(DocumentFilterContext context) =>
-		ControllersMetaStore.Current.RoutedControllers
-			.SelectMany(item => CreateControllerActions(item, context));
+	public static IEnumerable<ControllerAction> CreateControllerActionsFromControllersMetaData(
+		DocumentFilterContext context
+	) =>
+		ControllersMetaStore.Current.RoutedControllers.SelectMany(item =>
+			CreateControllerActions(item, context)
+		);
 
-	private static IEnumerable<ControllerAction> CreateControllerActions(IControllerMetadata item, DocumentFilterContext context) =>
-		item.ExecParameters!
-			.Routes
-			.Select(x => CreateControllerAction(x.Key, x.Value, item, context));
+	private static IEnumerable<ControllerAction> CreateControllerActions(
+		IControllerMetadata item,
+		DocumentFilterContext context
+	) =>
+		item.ExecParameters!.Routes.Select(x =>
+			CreateControllerAction(x.Key, x.Value, item, context)
+		);
 
-	private static ControllerAction CreateControllerAction(HttpMethod method, IControllerRoute route, IControllerMetadata item, DocumentFilterContext context) =>
+	private static ControllerAction CreateControllerAction(
+		HttpMethod method,
+		IControllerRoute route,
+		IControllerMetadata item,
+		DocumentFilterContext context
+	) =>
 		new()
 		{
 			Type = HttpMethodToOperationType(method),
@@ -76,11 +86,15 @@ public static class ControllerActionsFactory
 			Names = CreateNames(item.ControllerType),
 			Responses = CreateResponses(item.ControllerType, context),
 			RequestBody = CreateRequestBody(item.ControllerType, context),
-			IsAuthorizationRequired = item.Security is { IsAuthorizationRequired: true }
+			IsAuthorizationRequired = item.Security is { IsAuthorizationRequired: true },
+			RouteParameterTypes = GetRouteParameterTypes(item.ControllerType),
 		};
 
 	private static ControllerActionNames CreateNames(Type controllerType) =>
-		CreateNames(controllerType.FullName ?? throw new InvalidOperationException("controllerType.FullName is null"));
+		CreateNames(
+			controllerType.FullName
+				?? throw new InvalidOperationException("controllerType.FullName is null")
+		);
 
 	private static ControllerActionNames CreateNames(string name)
 	{
@@ -113,19 +127,36 @@ public static class ControllerActionsFactory
 		return str;
 	}
 
-	private static OperationType HttpMethodToOperationType(HttpMethod method) =>
+#if NET10_0
+	private static NetHttpMethod HttpMethodToOperationType(HttpMethod method) =>
 		method switch
 		{
-			HttpMethod.Get => OperationType.Get,
-			HttpMethod.Post => OperationType.Post,
-			HttpMethod.Put => OperationType.Put,
-			HttpMethod.Patch => OperationType.Patch,
-			HttpMethod.Delete => OperationType.Delete,
-			HttpMethod.Options => OperationType.Options,
-			_ => OperationType.Get
+			HttpMethod.Get => NetHttpMethod.Get,
+			HttpMethod.Post => NetHttpMethod.Post,
+			HttpMethod.Put => NetHttpMethod.Put,
+			HttpMethod.Patch => NetHttpMethod.Patch,
+			HttpMethod.Delete => NetHttpMethod.Delete,
+			HttpMethod.Options => NetHttpMethod.Options,
+			_ => NetHttpMethod.Get,
 		};
+#else
+    private static OperationType HttpMethodToOperationType(HttpMethod method) =>
+        method switch
+        {
+            HttpMethod.Get => OperationType.Get,
+            HttpMethod.Post => OperationType.Post,
+            HttpMethod.Put => OperationType.Put,
+            HttpMethod.Patch => OperationType.Patch,
+            HttpMethod.Delete => OperationType.Delete,
+            HttpMethod.Options => OperationType.Options,
+            _ => OperationType.Get,
+        };
+#endif
 
-	private static OpenApiRequestBody CreateRequestBody(Type controllerType, DocumentFilterContext context)
+	private static OpenApiRequestBody CreateRequestBody(
+		Type controllerType,
+		DocumentFilterContext context
+	)
 	{
 		var request = new OpenApiRequestBody();
 		var attributes = controllerType.GetCustomAttributes(typeof(RequestBodyAttribute), false);
@@ -137,31 +168,73 @@ public static class ControllerActionsFactory
 
 		request.Content = new Dictionary<string, OpenApiMediaType>
 		{
-			[item.ContentType] = new() { Schema = context.SchemaGenerator.GenerateSchema(item.Model, context.SchemaRepository) }
+			[item.ContentType] = new()
+			{
+				Schema = context.SchemaGenerator.GenerateSchema(
+					item.Model,
+					context.SchemaRepository
+				),
+			},
 		};
 
 		return request;
 	}
 
-	private static IDictionary<int, OpenApiResponse> CreateResponses(Type controllerType, DocumentFilterContext context) =>
-		controllerType.GetCustomAttributes(typeof(ProducesResponseAttribute), false)
+	private static IDictionary<int, OpenApiResponse> CreateResponses(
+		Type controllerType,
+		DocumentFilterContext context
+	) =>
+		controllerType
+			.GetCustomAttributes(typeof(ProducesResponseAttribute), false)
 			.Cast<ProducesResponseAttribute>()
 			.ToDictionary(item => item.StatusCode, item => CreateResponse(item, context));
 
-	private static OpenApiResponse CreateResponse(ProducesResponseAttribute producesResponse, DocumentFilterContext context)
+	private static OpenApiResponse CreateResponse(
+		ProducesResponseAttribute producesResponse,
+		DocumentFilterContext context
+	)
 	{
 		var response = new OpenApiResponse
 		{
 			Description = ResponseDescriptionMap
-				.FirstOrDefault((entry) => Regex.IsMatch(producesResponse.StatusCode.ToString(), entry.Key))
-				.Value
+				.FirstOrDefault(
+					(entry) => Regex.IsMatch(producesResponse.StatusCode.ToString(), entry.Key)
+				)
+				.Value,
 		};
 
 		foreach (var item in producesResponse.ContentTypes.Distinct())
-			response.Content.Add(item, producesResponse.Type is null
-				? new OpenApiMediaType()
-				: new OpenApiMediaType { Schema = context.SchemaGenerator.GenerateSchema(producesResponse.Type, context.SchemaRepository) });
+		{
+#if NET10_0
+			response.Content ??= new Dictionary<string, OpenApiMediaType>();
+#endif
+			response.Content.Add(
+				item,
+				producesResponse.Type is null
+					? new OpenApiMediaType()
+					: new OpenApiMediaType
+					{
+						Schema = context.SchemaGenerator.GenerateSchema(
+							producesResponse.Type,
+							context.SchemaRepository
+						),
+					}
+			);
+		}
 
 		return response;
+	}
+
+	private static IDictionary<string, Type> GetRouteParameterTypes(Type controllerType)
+	{
+		var method = controllerType.GetMethod("Invoke") ?? controllerType.GetMethod("InvokeAsync");
+
+		if (method is null)
+			return new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+
+		return method
+			.GetParameters()
+			.Where(p => p.Name != null)
+			.ToDictionary(p => p.Name!, p => p.ParameterType, StringComparer.OrdinalIgnoreCase);
 	}
 }
