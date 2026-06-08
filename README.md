@@ -15,8 +15,8 @@
 
 ```xml
 <PackageReference Include="Simplify.Web.Swagger" Version="1.0.*" />
-<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.*" />
-<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.6.*" />
+<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.*" />
+<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.*" />
 ```
 
 2. Add `AddSimplifyWebSwagger` in `AddSwaggerGen` registration and `Simplify.Web` controllers will be scanned during Swagger generation process.
