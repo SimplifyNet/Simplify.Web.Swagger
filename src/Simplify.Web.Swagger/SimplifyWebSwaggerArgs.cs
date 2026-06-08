@@ -1,9 +1,5 @@
 using System.Collections.Generic;
-#if NET10_0
 using Microsoft.OpenApi;
-#else
-using Microsoft.OpenApi.Models;
-#endif
 
 namespace Simplify.Web.Swagger;
 

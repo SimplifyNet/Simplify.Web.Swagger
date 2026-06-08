@@ -7,12 +7,8 @@ using Simplify.Web.Controllers.Meta.MetaStore;
 using Simplify.Web.Controllers.Meta.Routing;
 using Simplify.Web.Http;
 using Swashbuckle.AspNetCore.SwaggerGen;
-#if NET10_0
 using Microsoft.OpenApi;
 using NetHttpMethod = System.Net.Http.HttpMethod;
-#else
-using Microsoft.OpenApi.Models;
-#endif
 
 namespace Simplify.Web.Swagger;
 
@@ -127,7 +123,6 @@ public static class ControllerActionsFactory
 		return str;
 	}
 
-#if NET10_0
 	private static NetHttpMethod HttpMethodToOperationType(HttpMethod method) =>
 		method switch
 		{
@@ -139,19 +134,6 @@ public static class ControllerActionsFactory
 			HttpMethod.Options => NetHttpMethod.Options,
 			_ => NetHttpMethod.Get,
 		};
-#else
-    private static OperationType HttpMethodToOperationType(HttpMethod method) =>
-        method switch
-        {
-            HttpMethod.Get => OperationType.Get,
-            HttpMethod.Post => OperationType.Post,
-            HttpMethod.Put => OperationType.Put,
-            HttpMethod.Patch => OperationType.Patch,
-            HttpMethod.Delete => OperationType.Delete,
-            HttpMethod.Options => OperationType.Options,
-            _ => OperationType.Get,
-        };
-#endif
 
 	private static OpenApiRequestBody CreateRequestBody(
 		Type controllerType,
@@ -205,9 +187,7 @@ public static class ControllerActionsFactory
 
 		foreach (var item in producesResponse.ContentTypes.Distinct())
 		{
-#if NET10_0
 			response.Content ??= new Dictionary<string, OpenApiMediaType>();
-#endif
 			response.Content.Add(
 				item,
 				producesResponse.Type is null

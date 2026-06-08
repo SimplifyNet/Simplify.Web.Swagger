@@ -1,12 +1,8 @@
+using Microsoft.OpenApi;
 using Simplify.DI;
 using Simplify.Web;
 using Simplify.Web.Swagger;
 using TesterApp.Setup;
-#if NET10_0
-using Microsoft.OpenApi;
-#else
-using Microsoft.OpenApi.Models;
-#endif
 
 var builder = WebApplication.CreateBuilder(args);
 
