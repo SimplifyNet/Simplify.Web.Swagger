@@ -176,11 +176,7 @@ public class SimplifyWebDocumentFilter : IDocumentFilter
 		if (_args?.SecuritySchemeName is { } explicitName)
 			return [explicitName];
 
-#if NET10_0
 		return swaggerDoc.Components?.SecuritySchemes?.Keys?.ToList() ?? [];
-#else
-		return swaggerDoc.Components.SecuritySchemes.Keys.ToList();
-#endif
 	}
 
 	private static OpenApiParameter CreateAcceptLanguageParameter(AcceptLanguageHeaderArgs args)
