@@ -126,37 +126,38 @@ public class SimplifyWebDocumentFilter : IDocumentFilter
 		if (item.RequestBody.Content is { Count: > 0 })
 			operation.RequestBody = item.RequestBody;
 
+		if (item.IsAuthorizationRequired)
+		{
+			var schemeNames = ResolveSecuritySchemeNames(swaggerDoc);
+
 #if NET10_0
-		if (
-			item.IsAuthorizationRequired && _args?.SecuritySchemeName is { } securitySchemeNameNet10
-		)
-			operation.Security =
-			[
-				new OpenApiSecurityRequirement
-				{
-					[new OpenApiSecuritySchemeReference(securitySchemeNameNet10, swaggerDoc)] = [],
-				},
-			];
-#else
-		if (item.IsAuthorizationRequired && _args?.SecuritySchemeName is { } securitySchemeName)
-			operation.Security = new List<OpenApiSecurityRequirement>
-			{
-				new()
-				{
+			if (schemeNames.Count > 0)
+				operation.Security = schemeNames
+					.Select(name => new OpenApiSecurityRequirement
 					{
-						new OpenApiSecurityScheme
+						[new OpenApiSecuritySchemeReference(name, swaggerDoc)] = [],
+					})
+					.ToList();
+#else
+			if (schemeNames.Count > 0)
+				operation.Security = schemeNames
+					.Select(name => new OpenApiSecurityRequirement
+					{
 						{
-							Reference = new OpenApiReference
+							new OpenApiSecurityScheme
 							{
-								Type = ReferenceType.SecurityScheme,
-								Id = securitySchemeName,
+								Reference = new OpenApiReference
+								{
+									Type = ReferenceType.SecurityScheme,
+									Id = name,
+								},
 							},
+							new List<string>()
 						},
-						new List<string>()
-					},
-				},
-			};
+					})
+					.ToList();
 #endif
+		}
 
 		if (_args == null)
 			return operation;
@@ -168,6 +169,18 @@ public class SimplifyWebDocumentFilter : IDocumentFilter
 			operation.Parameters.Add(CreateAcceptLanguageParameter(acceptLang));
 
 		return operation;
+	}
+
+	private IReadOnlyList<string> ResolveSecuritySchemeNames(OpenApiDocument swaggerDoc)
+	{
+		if (_args?.SecuritySchemeName is { } explicitName)
+			return [explicitName];
+
+#if NET10_0
+		return swaggerDoc.Components?.SecuritySchemes?.Keys?.ToList() ?? [];
+#else
+		return swaggerDoc.Components.SecuritySchemes.Keys.ToList();
+#endif
 	}
 
 	private static OpenApiParameter CreateAcceptLanguageParameter(AcceptLanguageHeaderArgs args)

@@ -60,21 +60,19 @@ public class GetController : Controller2
 
 ### Bearer security scheme
 
-When your controllers use authorization (`[Authorize]`), `Simplify.Web.Swagger` automatically adds the Bearer security requirement to the corresponding operations. The security scheme name defaults to `"Bearer"`:
+When your controllers use authorization (`[Authorize]`), `Simplify.Web.Swagger` automatically adds security requirements to the corresponding operations using **all security schemes registered via `AddSecurityDefinition`** — no extra configuration needed:
 
 ```csharp
-x.AddSimplifyWebSwagger(new SimplifyWebSwaggerArgs
-{
-    SecuritySchemeName = "Bearer" // default, can be omitted
-});
+x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme { ... });
+x.AddSimplifyWebSwagger(); // Bearer requirement is added automatically
 ```
 
-To use a different scheme name, set `SecuritySchemeName` to match the name used in `AddSecurityDefinition`. To disable security requirements entirely, set it to `null`:
+To restrict to a specific scheme name (e.g. when you have multiple definitions but want only one applied), set `SecuritySchemeName` explicitly:
 
 ```csharp
 x.AddSimplifyWebSwagger(new SimplifyWebSwaggerArgs
 {
-    SecuritySchemeName = null // disables security requirements on all operations
+    SecuritySchemeName = "Bearer"
 });
 ```
 

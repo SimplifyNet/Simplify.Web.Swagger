@@ -24,8 +24,8 @@ public class SimplifyWebSwaggerArgs
 
 	/// <summary>
 	/// The security scheme name to apply to authorized operations (e.g. "Bearer").
-	/// When set, operations on controllers with <c>IsAuthorizationRequired</c> will have
-	/// a security requirement added referencing this scheme.
+	/// When <c>null</c> (default), all security schemes registered via <c>AddSecurityDefinition</c>
+	/// are applied automatically. Set to an explicit name to restrict to a single scheme.
 	/// </summary>
-	public string? SecuritySchemeName { get; set; } = "Bearer";
+	public string? SecuritySchemeName { get; set; }
 }
