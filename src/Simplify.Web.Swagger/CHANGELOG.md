@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.0.0] - Unreleased
+## [2.0.0] - 2026-06-08
 
 ### Added
 
@@ -19,7 +19,7 @@
 
 - Simplify.Web bump to 5.2
 - Asp.Versioning.Mvc bump to 8.1.1
-- Swashbuckle.AspNetCore.SwaggerGen bump to 10.2.1 (net10.0)
+- Swashbuckle.AspNetCore.SwaggerGen bump to 10.2.1
 
 ## [1.2.0] - 2025-10-10
 
