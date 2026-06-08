@@ -2,10 +2,24 @@
 
 ## [1.3.0] - Unreleased
 
+### Added
+
+- .NET 10.0 explicit support
+- `AcceptLanguageHeaderArgs` — configures an `Accept-Language` header parameter added to all Swagger operations
+- `SimplifyWebSwaggerArgs.AcceptLanguageHeader` — enables Accept-Language header with supported languages list
+- `SimplifyWebSwaggerArgs.SecuritySchemeName` — explicit override for security scheme name; when `null` (default), all schemes registered via `AddSecurityDefinition` are applied automatically to authorized operations
+- Route parameter types auto-detection from controller `Invoke`/`InvokeAsync` method signatures (typed path parameters in Swagger schema)
+- `AddSimplifyWebSwaggerServices` extension method — registers PascalCase `ISerializerDataContractResolver` before `AddSwaggerGen`
+
+### Changed
+
+- Security requirements on authorized operations are now auto-detected from registered `AddSecurityDefinition` schemes; no manual `SecuritySchemeName` configuration needed
+
 ### Dependencies
 
 - Simplify.Web bump to 5.2
 - Asp.Versioning.Mvc bump to 8.1.1
+- Swashbuckle.AspNetCore.SwaggerGen bump to 10.2.1 (net10.0)
 
 ## [1.2.0] - 2025-10-10
 
