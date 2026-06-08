@@ -72,7 +72,7 @@ To restrict to a specific scheme name (e.g. when you have multiple definitions b
 ```csharp
 x.AddSimplifyWebSwagger(new SimplifyWebSwaggerArgs
 {
-    SecuritySchemeName = "Bearer"
+	SecuritySchemeName = "Bearer"
 });
 ```
 
@@ -82,12 +82,12 @@ By default, Swagger schema property names follow the `System.Text.Json` default 
 
 ```csharp
 builder.Services
-    .AddSingleton<ISerializerDataContractResolver>(_ =>
-        new JsonSerializerDataContractResolver(
-            new JsonSerializerOptions(JsonSerializerDefaults.Web)
-        ))
-    .AddEndpointsApiExplorer()
-    .AddSwaggerGen(x => x.AddSimplifyWebSwagger());
+	.AddSingleton<ISerializerDataContractResolver>(_ =>
+		new JsonSerializerDataContractResolver(
+			new JsonSerializerOptions(JsonSerializerDefaults.Web)
+		))
+	.AddEndpointsApiExplorer()
+	.AddSwaggerGen(x => x.AddSimplifyWebSwagger());
 ```
 
 ## Example application
