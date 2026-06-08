@@ -18,9 +18,14 @@ public class SimplifyWebSwaggerArgs
 	public IList<OpenApiParameter> Parameters { get; } = [];
 
 	/// <summary>
+	/// When set, adds an <c>Accept-Language</c> header parameter to every operation.
+	/// </summary>
+	public AcceptLanguageHeaderArgs? AcceptLanguageHeader { get; set; }
+
+	/// <summary>
 	/// The security scheme name to apply to authorized operations (e.g. "Bearer").
 	/// When set, operations on controllers with <c>IsAuthorizationRequired</c> will have
 	/// a security requirement added referencing this scheme.
 	/// </summary>
-	public string? SecuritySchemeName { get; set; }
+	public string? SecuritySchemeName { get; set; } = "Bearer";
 }

@@ -35,6 +35,12 @@ public class ControllerAction
 	public IDictionary<int, OpenApiResponse> Responses { get; set; } = new Dictionary<int, OpenApiResponse>();
 
 	/// <summary>
+	/// Gets or sets the route parameter types, keyed by parameter name (case-insensitive).
+	/// </summary>
+	public IDictionary<string, Type> RouteParameterTypes { get; set; } =
+		new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+
+	/// <summary>
 	/// Gets or sets the type.
 	/// </summary>
 	/// <value>

@@ -5,6 +5,7 @@ using Simplify.Web.Controllers.Meta.Routing;
 using Swashbuckle.AspNetCore.SwaggerGen;
 #if NET10_0
 using Microsoft.OpenApi;
+using JsonNode = System.Text.Json.Nodes.JsonNode;
 #else
 using Microsoft.OpenApi.Models;
 #endif
@@ -46,7 +47,7 @@ public class SimplifyWebDocumentFilter : IDocumentFilter
 				.GroupBy(x => x.Path)
 				.Select(x => new KeyValuePair<string, OpenApiPathItem>(
 					x.Key,
-					CreatePathItem(x, swaggerDoc)
+					CreatePathItem(x, swaggerDoc, context)
 				))
 		)
 			swaggerDoc.Paths.Add(item.Key, item.Value);
@@ -55,48 +56,50 @@ public class SimplifyWebDocumentFilter : IDocumentFilter
 	}
 
 #if NET10_0
-	private static IList<IOpenApiParameter> CreateParameters(IControllerRoute path) =>
-		path
-			.Items.Where(x => x is PathParameter)
-			.Cast<PathParameter>()
-			.Select(x =>
-				(IOpenApiParameter)
-					new OpenApiParameter
-					{
-						Name = x.Name,
-						In = ParameterLocation.Path,
-						AllowEmptyValue = false,
-					}
-			)
+	private static IList<IOpenApiParameter> CreateParameters(ControllerAction item, DocumentFilterContext context) =>
+		item.ControllerRoute.Items
+			.OfType<PathParameter>()
+			.Select(x => (IOpenApiParameter)CreatePathParameter(x, item, context))
 			.ToList();
 #else
-	private static IList<OpenApiParameter> CreateParameters(IControllerRoute path) =>
-		path
-			.Items.Where(x => x is PathParameter)
-			.Cast<PathParameter>()
-			.Select(x => new OpenApiParameter
-			{
-				Name = x.Name,
-				In = ParameterLocation.Path,
-				AllowEmptyValue = false,
-			})
+	private static IList<OpenApiParameter> CreateParameters(ControllerAction item, DocumentFilterContext context) =>
+		item.ControllerRoute.Items
+			.OfType<PathParameter>()
+			.Select(x => CreatePathParameter(x, item, context))
 			.ToList();
 #endif
 
+	private static OpenApiParameter CreatePathParameter(PathParameter pathParam, ControllerAction item, DocumentFilterContext context)
+	{
+		var param = new OpenApiParameter
+		{
+			Name = pathParam.Name,
+			In = ParameterLocation.Path,
+			Required = true,
+			AllowEmptyValue = false,
+		};
+
+		if (item.RouteParameterTypes.TryGetValue(pathParam.Name, out var type))
+			param.Schema = context.SchemaGenerator.GenerateSchema(type, context.SchemaRepository);
+
+		return param;
+	}
+
 	private OpenApiPathItem CreatePathItem(
 		IEnumerable<ControllerAction> actions,
-		OpenApiDocument swaggerDoc
+		OpenApiDocument swaggerDoc,
+		DocumentFilterContext context
 	)
 	{
 		var pathItem = new OpenApiPathItem();
 
 		foreach (var item in actions)
-			pathItem.AddOperation(item.Type, CreateOperation(item, swaggerDoc));
+			pathItem.AddOperation(item.Type, CreateOperation(item, swaggerDoc, context));
 
 		return pathItem;
 	}
 
-	private OpenApiOperation CreateOperation(ControllerAction item, OpenApiDocument swaggerDoc)
+	private OpenApiOperation CreateOperation(ControllerAction item, OpenApiDocument swaggerDoc, DocumentFilterContext context)
 	{
 		var operation = new OpenApiOperation();
 
@@ -118,7 +121,7 @@ public class SimplifyWebDocumentFilter : IDocumentFilter
 			operation.Responses.Add(response.Key.ToString(), response.Value);
 		}
 
-		operation.Parameters = CreateParameters(item.ControllerRoute);
+		operation.Parameters = CreateParameters(item, context);
 
 		if (item.RequestBody.Content is { Count: > 0 })
 			operation.RequestBody = item.RequestBody;
@@ -161,7 +164,40 @@ public class SimplifyWebDocumentFilter : IDocumentFilter
 		foreach (var parameter in _args.Parameters)
 			operation.Parameters.Add(parameter);
 
+		if (_args.AcceptLanguageHeader is { } acceptLang)
+			operation.Parameters.Add(CreateAcceptLanguageParameter(acceptLang));
+
 		return operation;
+	}
+
+	private static OpenApiParameter CreateAcceptLanguageParameter(AcceptLanguageHeaderArgs args)
+	{
+		var param = new OpenApiParameter
+		{
+			Name = "Accept-Language",
+			In = ParameterLocation.Header,
+			Description = "Language preference for the response.",
+			Required = true,
+			AllowEmptyValue = true,
+		};
+
+#if NET10_0
+		param.Example = args.Default;
+		param.Schema = new OpenApiSchema
+		{
+			Default = args.Default,
+			Enum = args.Languages.Select(l => (JsonNode)l).ToList()
+		};
+#else
+		param.Example = new Microsoft.OpenApi.Any.OpenApiString(args.Default);
+		param.Schema = new OpenApiSchema
+		{
+			Default = new Microsoft.OpenApi.Any.OpenApiString(args.Default),
+			Enum = args.Languages.Select(l => (Microsoft.OpenApi.Any.IOpenApiAny)new Microsoft.OpenApi.Any.OpenApiString(l)).ToList()
+		};
+#endif
+
+		return param;
 	}
 
 	private static void PopulateDocumentTags(

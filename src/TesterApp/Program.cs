@@ -1,4 +1,3 @@
-using System.Text.Json.Nodes;
 using Microsoft.OpenApi;
 using Simplify.DI;
 using Simplify.Web;
@@ -12,7 +11,8 @@ DIContainer.Current.RegisterAll().Verify();
 
 // Swagger
 builder
-	.Services.AddEndpointsApiExplorer()
+	.Services.AddSimplifyWebSwaggerServices()
+	.AddEndpointsApiExplorer()
 	.AddSwaggerGen(x =>
 	{
 		x.AddSecurityDefinition(
@@ -31,25 +31,8 @@ builder
 
 		var swaggerArgs = new SimplifyWebSwaggerArgs
 		{
-			SecuritySchemeName = "Bearer"
+			AcceptLanguageHeader = new AcceptLanguageHeaderArgs("en-US", "ru-RU", "kk-KZ"),
 		};
-
-		var parameter = new OpenApiParameter
-		{
-			Name = "Accept-Language",
-			In = ParameterLocation.Header,
-			Description = "Language preference for the response.",
-			Required = true,
-			AllowEmptyValue = true,
-			Example = "en-US",
-			Schema = new OpenApiSchema
-			{
-				Default = "en-US",
-				Enum = [(JsonNode)"en-US", (JsonNode)"ru-RU"],
-			},
-		};
-
-		swaggerArgs.Parameters.Add(parameter);
 
 		x.AddSimplifyWebSwagger(swaggerArgs);
 	});
@@ -59,6 +42,7 @@ builder
 var app = builder.Build();
 
 app.UseSwagger();
+
 app.UseSwaggerUI();
 
 app.UseSimplifyWeb();
