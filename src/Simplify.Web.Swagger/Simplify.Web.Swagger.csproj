@@ -9,7 +9,7 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
-		<Version>2.0</Version>
+		<Version>2.1</Version>
 
 		<Description>Swagger extensions for Simplify.Web web-framework</Description>
 		<Product>Simplify</Product>
@@ -25,11 +25,9 @@
 		<PackageReleaseNotes>See https://github.com/SimplifyNet/Simplify.Web.Swagger/tree/master/src/Simplify.Web.Swagger/CHANGELOG.md for details</PackageReleaseNotes>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.1" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="Simplify.Web" Version="5.2" />
+		<PackageReference Include="Asp.Versioning.Mvc" Version="10.0.0" />
+		<PackageReference Include="Simplify.Web" Version="5.3.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\images\icon.png" Pack="true" Visible="false" PackagePath="" />

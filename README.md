@@ -5,7 +5,7 @@
 [![Build Package](https://github.com/SimplifyNet/Simplify.Web.Swagger/actions/workflows/build.yml/badge.svg)](https://github.com/SimplifyNet/Simplify.Web.Swagger/actions/workflows/build.yml)
 [![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/nuget/Simplify.Web.Swagger)](https://libraries.io/nuget/Simplify.Web.Swagger)
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/SimplifyNet/Simplify.Web.Swagger)](https://www.codefactor.io/repository/github/simplifynet/Simplify.Web.Swagger)
-![Platform](https://img.shields.io/badge/platform-.NET%206.0%20%7C%20.NET%20Standard%202.0-lightgrey)
+![Platform](https://img.shields.io/badge/platform-.NET%2010.0-lightgrey)
 
 `Simplify.Web.Swagger` is a package which provides Swagger generation for [Simplify.Web](https://github.com/SimplifyNet/Simplify.Web) web-framework controllers.
 

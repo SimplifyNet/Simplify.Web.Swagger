@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0] - 2026-06-26
+
+### Dependencies
+
+- Simplify.Web bump to 5.3.0
+- Asp.Versioning.Mvc bump to 10.0.0
+- Swashbuckle.AspNetCore.SwaggerGen bump to 10.2.3
+
 ## [2.0.0] - 2026-06-08
 
 ### Added
