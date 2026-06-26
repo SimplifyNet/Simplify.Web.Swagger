@@ -2,6 +2,16 @@
 
 ## [2.1.0] - 2026-06-26
 
+
+### Added
+
+- .NET 10.0 explicit support
+
+### Removed
+
+- .NET 9.0 explicit support
+- .NET 8.0 explicit support
+
 ### Dependencies
 
 - Simplify.Web bump to 5.3.0
